@@ -1,2 +1,2 @@
 # financial-programming
-My practice repo for Finance, Stocks, and Trading related programming
+My practice repo for Finance oriented programming, Stocks, and Trading.
