@@ -1,6 +1,8 @@
 import socket
 import ssl
 import time
+import quickfix
+
 
 from fixengine import FIXEngine
 

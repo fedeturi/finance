@@ -1,0 +1,30 @@
+1. Crear cuenta en reMarkets
+2. Descargar stunnel e instalar [https://www.stunnel.org/downloads.html]
+3. Con stunnel abierto, editar el archivo de configuracion:
+    -> Edit Configuration
+    -> Bajar hasta la seccion "Service Definitions"
+    -> Agregar la siguiente conexion para configurar el tunel FIX_initiator
+        [fix_initiator_tunnel]
+        client = yes
+        accept  = 127.0.0.1:8080
+        connect = fix.remarkets.primary.com.ar:9876
+4. OPCION 1:
+   -> Instalar QuickFix con pip
+           pip install quickfix
+      (Si aparece un error porque no tenemos Microsoft Visual studio c++
+      lo tenemos que descargar desde aca
+      [https://visualstudio.microsoft.com/visual-cpp-build-tools/]
+      Hay que instalar Build tools para C++.
+      Despues volver a isntalar QuickFIx con pip).
+
+     OPCION 2:
+   -> Descargar el archivo wheel precompilado desde aca
+      [https://www.lfd.uci.edu/~gohlke/pythonlibs/#quickfix]
+      Tener en cuenta lo siguiente :
+          Python 2.7 > cp27
+          Python 3.5 > cp35 etc
+          32-bit processor > win32
+          64-bit processor > win_adm64
+   -> Copiar el archivo wheel al directorio donde tenemos instalado python
+      (se puede buscar en la consola con "where python")
+   ->
