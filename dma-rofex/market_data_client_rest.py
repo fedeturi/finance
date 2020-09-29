@@ -16,12 +16,15 @@
 import time
 import pprint
 import pyRofex
+import pandas as pd
 
 # 1-Initialize the environment
 pyRofex.initialize(user="fedejbrun5018",
                    password="ugklxY0*",
                    account="REM5018",
                    environment=pyRofex.Environment.REMARKET)
+
+pprint.pprint(pyRofex.get_all_instruments())
 
 
 # 2-Defines the handlers that will process the messages and exceptions.
@@ -47,7 +50,8 @@ pyRofex.init_websocket_connection(market_data_handler=market_data_handler,
 instruments = ["GGALOct20", "GGALDic20"]  # Instruments list to subscribe
 entries = [pyRofex.MarketDataEntry.BIDS,
            pyRofex.MarketDataEntry.OFFERS,
-           pyRofex.MarketDataEntry.LAST]
+           pyRofex.MarketDataEntry.LAST,
+           pyRofex.MarketDataEntry.HIGH_PRICE]
 
 pyRofex.market_data_subscription(tickers=instruments,
                                  entries=entries)
