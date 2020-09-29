@@ -38,7 +38,8 @@ def market_data_handler(message):
         if ticker:
             full_book = pyRofex.get_market_data(ticker, ticker_entries, depth=10)
             trade_history = pyRofex.get_trade_history(ticker, dt.date(2020, 1, 1), dt.date.today())
-            trade_history_df = pd.DataFrame.from_dict(trade_history)
+            trade_history_df = pd.DataFrame.from_dict(trade_history.get('trades')).drop('servertime', axis=1)
+            trade_history_df = trade_history_df[['symbol', 'price', 'size', 'datetime']]
             print(f"Trade History {ticker}")
             print(pprint.pprint(trade_history_df))
 
