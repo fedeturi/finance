@@ -15,11 +15,28 @@
 """
 import sys
 import pprint
+import time
+
 import pyRofex
 import pandas as pd
 import traceback
 import simplejson
 import datetime as dt
+import json
+
+
+def send_buy_order(ticker, price, qty):
+    order = pyRofex.send_order(ticker=ticker,
+                               side=pyRofex.Side.BUY,
+                               size=qty,
+                               price=price,
+                               order_type=pyRofex.OrderType.LIMIT)
+
+    print("Send Order Response:")
+    pprint.pprint(order)
+    order_status = pyRofex.get_order_status(order["order"]["clientId"])
+    print("Order Status Response:")
+    pprint.pprint(order_status)
 
 
 # 1-Initialize the environment
@@ -31,21 +48,34 @@ pyRofex.initialize(user="fedejbrun5018",
 
 # 2-Defines the handlers that will process the messages and exceptions.
 def market_data_handler(message):
+    global quoting_price
+    global quoting_qty
+    global order_sent
+
     try:
         ticker = message.get('instrumentId').get('symbol')
         ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
 
         if ticker:
             full_book = pyRofex.get_market_data(ticker, ticker_entries, depth=10)
-            trade_history = pyRofex.get_trade_history(ticker, dt.date(2020, 1, 1), dt.date.today())
-            trade_history_df = pd.DataFrame.from_dict(trade_history.get('trades')).drop('servertime', axis=1)
-            trade_history_df = trade_history_df[['symbol', 'price', 'size', 'datetime']]
-            print(f"Trade History {ticker}")
-            print(pprint.pprint(trade_history_df))
+            # trade_history = pyRofex.get_trade_history(ticker, dt.date(2020, 1, 1), dt.date.today())
+            # trade_history_df = pd.DataFrame.from_dict(trade_history.get('trades')).drop('servertime', axis=1)
+            # trade_history_df = trade_history_df[['symbol', 'price', 'size', 'datetime']]
+            # print(f"Trade History {ticker}")
+            # print(pprint.pprint(trade_history_df))
 
             print(f"Full book for {ticker}")
-            print(pprint.pprint(full_book))
-        """
+            print(pprint.pprint(full_book.get('marketData')))
+            market_price = float(full_book.get('marketData').get('BI')[0].get('price'))
+            quoting_price = market_price + 0.05
+            market_qty = int(full_book.get('marketData').get('OF')[0].get('size'))
+            quoting_qty = market_qty
+
+        if order_sent < 1:
+            send_buy_order("GGALOct20", quoting_price, quoting_qty)
+            order_sent += 1
+
+        """    
         print(message.get('instrumentId'))
         instrument_df = pd.DataFrame(message)
         bid_series = message.get('marketData').get('BI')
@@ -56,7 +86,6 @@ def market_data_handler(message):
         print(ask_series)
         print(instrument_df)
         """
-        # Codigo para procesar el mensaje
     except Exception:
         traceback.print_exc()
 
@@ -75,10 +104,21 @@ pyRofex.init_websocket_connection(market_data_handler=market_data_handler,
                                   exception_handler=exception_handler)
 
 # 4-Subscribes to receive market data messages
-instruments = ["GGALOct20", "GGALDic20"]  # Instruments list to subscribe
+instruments = ["GGALOct20"]  # Instruments list to subscribe
 entries = [pyRofex.MarketDataEntry.BIDS,
            pyRofex.MarketDataEntry.OFFERS,
            pyRofex.MarketDataEntry.OPEN_INTEREST]
+
+quoting_price = 0.0
+quoting_qty = 0
+order_sent = 0
+
+pyRofex.market_data_subscription(tickers=instruments,
+                                 entries=entries)
+pyRofex.order_report_subscription()
+
+time.sleep(5)
+instruments.append("GGALDic20")
 
 pyRofex.market_data_subscription(tickers=instruments,
                                  entries=entries)
