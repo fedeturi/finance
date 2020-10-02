@@ -14,7 +14,7 @@ dash_line = "-" * width
 
 
 class ROFEXClient:
-    """Start Client to connect to ROFEX DMA server
+    """Implements Client to connect to ROFEX DMA server
 
     :param user: User.
     :type user: Str.
@@ -38,6 +38,7 @@ class ROFEXClient:
         env = environments.get(env_param)
 
         # Create logging file
+        # TODO Implementar validacion para Windows/Linux
         filename = 'c:/logs/ROFEX' + env_param \
                    + time.strftime('%Y-%m-%d_%H%M%S', time.localtime(time.time())) + '.log'
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
@@ -64,18 +65,41 @@ class ROFEXClient:
     #   Start HANDLERS definition
     # ==================================================================================================================
     def market_data_handler(self, message):
+        """
+        Handles MarketData Messages received from server.
+        :param message: Message received. Comes as a JSON.
+        :type message: Dict.
+        """
         try:
             self.process_market_data_message(message)
         except Exception:
             traceback.print_exec()
 
     def order_report_handler(self, message):
+        """
+        Handles OrderReport Messages received from server.
+        :param message: Message received. Comes as a JSON.
+        :type message: Dict.
+        """
+        # TODO implement
         print("Order Report Message Received: {0}".format(message))
 
     def error_handler(self, message):
+        """
+        Handles Error Messages received from server.
+        :param message: Message received. Comes as a JSON.
+        :type message: Dict.
+        """
+        # TODO implement
         print("Error Message Received: {0}".format(message))
 
     def exception_handler(self, e):
+        """
+        Handles Exception Messages received from server.
+        :param message: Message received. Comes as a JSON.
+        :type message: Dict.
+        """
+        # TODO implement
         print("Exception Occurred: {0}".format(e.message))
 
     # ==================================================================================================================
@@ -83,10 +107,22 @@ class ROFEXClient:
     # ==================================================================================================================
 
     # ==================================================================================================================
-    #   Start UTIL FUNCTIONS definition
+    #   Start UTILITY FUNCTIONS definition
     # ==================================================================================================================
 
     def connect(self, user, password, account, environment, ):
+        """
+        Implements Connection to ROFEX DMA Server.
+        Initializes environment and WebSocket Connection
+            :param user: User.
+            :type user: Str.
+            :param password: User Password.
+            :type password: Str.
+            :param account: Account provided by Market Authority.
+            :type account: Str.
+            :param environment: Market environment. (demo = reMarkets; live = ROFEX)
+            :type environment: Str.
+        """
 
         clear_screen()
         print(dash_line)
@@ -118,6 +154,9 @@ class ROFEXClient:
             print(dash_line)
 
     def disconnect(self):
+        """
+        Terminates Connection to ROFEX DMA Server.
+        """
 
         if logging.getLevelName('DEBUG') > 1:
             logging.debug(f'ROFEXClient: Disconnecting.')
@@ -130,6 +169,12 @@ class ROFEXClient:
         sys.exit(0)
 
     def subscribe_instruments(self, args):
+        """
+        Subscribes to MarketData for specified products.
+        (Each given Ticker HAS to be a str inside a one element list).
+        :param args: List of tickers to subscribe to MarketData.
+        :type args: list of list
+        """
 
         entries = [pyRofex.MarketDataEntry.BIDS,
                    pyRofex.MarketDataEntry.OFFERS,
@@ -157,6 +202,11 @@ class ROFEXClient:
             print(dash_line)
 
     def process_market_data_message(self, message):
+        """
+        Prints book and MarketData for each updated Ticker whenever the market changes.
+        :param message: Message received. Comes as a JSON.
+        :type message: Dict.
+        """
 
         try:
             ticker = message.get('instrumentId').get('symbol')
@@ -179,13 +229,21 @@ class ROFEXClient:
             traceback.print_exc()
             pass
 
+    # ==================================================================================================================
+    #   End UTILITY FUNCTIONS definition
+    # ==================================================================================================================
+
 
 def clear_screen():
+    """
+    Used to clear screen buffer.
+    Works in Windows and Unix systems
+    """
     # for windows
     if name == 'nt':
         _ = system('cls')
 
-        # for mac and linux(here, os.name is 'posix')
+    # for mac and linux(here, os.name is 'posix')
     else:
         _ = system('clear')
 
