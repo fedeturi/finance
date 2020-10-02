@@ -1,3 +1,10 @@
+environment setup
+
+conda env create -n dash-quant-academy -f enviroment.yml
+conda activate dash-quant-academy
+
+
+
 1. Crear cuenta en reMarkets
 2. Descargar stunnel e instalar [https://www.stunnel.org/downloads.html]
 3. Con stunnel abierto, editar el archivo de configuracion:
