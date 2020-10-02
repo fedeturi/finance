@@ -14,15 +14,15 @@ dash_line = "-" * width
 
 
 class ROFEXClient:
-    """Implements Client to connect to ROFEX DMA server
-
+    """Implements Client to connect to ROFEX DMA server.
+    (demo = reMarkets; live = ROFEX)
     :param user: User.
     :type user: Str.
     :param password: User Password.
     :type password: Str.
     :param account: Account provided by Market Authority.
     :type account: Str.
-    :param environment: Market environment. (demo = reMarkets; live = ROFEX)
+    :param environment: Market environment.
     :type environment: Str.
     """
     def __init__(self, user, password, account, environment, verbose=3):
@@ -113,6 +113,7 @@ class ROFEXClient:
     def connect(self, user, password, account, environment, ):
         """
         Implements Connection to ROFEX DMA Server.
+        (demo = reMarkets; live = ROFEX)
         Initializes environment and WebSocket Connection
             :param user: User.
             :type user: Str.
@@ -120,7 +121,7 @@ class ROFEXClient:
             :type password: Str.
             :param account: Account provided by Market Authority.
             :type account: Str.
-            :param environment: Market environment. (demo = reMarkets; live = ROFEX)
+            :param environment: Market environment.
             :type environment: Str.
         """
 
