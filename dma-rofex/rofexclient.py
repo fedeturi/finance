@@ -99,7 +99,13 @@ class ROFEXClient:
         :type message: Dict.
         """
         # TODO implement
-        print("Error Message Received: {0}".format(message))
+        if logging.getLevelName('DEBUG') > 1:
+            logging.debug(f'ROFEXClient ERROR: Error message received {message}')
+
+        print(dash_line)
+        error_msg = f"\033[0;30;47mERROR: MESSAGE RECEIVED \"{message.get('description')}\". \nCheck log file " \
+                    "for detailed error message.\033[1;37;40m"
+        print(error_msg)
 
     def exception_handler(self, e):
         """
@@ -277,9 +283,13 @@ class ROFEXClient:
                 full_book_df.fillna(0, inplace=True)
                 lk.acquire()
                 print(dash_line)
-                print(f"----------- {ticker} - MarketData ".ljust(width, '-'))
+                msg_centered = f"{ticker} - MarketData".ljust(width, ' ')
+                md_header = f"\033[0;30;47m{msg_centered}\033[1;37;40m"
+                print(md_header)
                 print("   BID         ASK")
                 print(full_book_df)
+                print("\nTop:", full_book_df['BS'].iloc[0], full_book_df['BP'].iloc[0],
+                      full_book_df['OP'].iloc[0], full_book_df['OS'].iloc[0])
                 lk.release()
 
             else:
@@ -478,7 +488,7 @@ def clear_screen():
 
 if __name__ == '__main__':
     rofex_client = ROFEXClient("fedejbrun5018", "ugklxY0*", "REM5018", "demo")
-    rofex_client.subscribe_instruments([["GGALOct20"], ["GGALDic20"]])
+    rofex_client.subscribe_instruments([["GGALOct20"], ["GGALDic20"], ["instrumento"]])
 
     price = rofex_client.get_market_price("GGALOct20")
     quoting_price = rofex_client.get_quoting_price(price)
