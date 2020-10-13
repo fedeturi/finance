@@ -80,8 +80,10 @@ class ROFEXClient:
         """
         try:
             self.process_market_data_message(message)
-        except Exception:
-            traceback.print_exec()
+
+        except Exception as e:
+            if logging.getLevelName('DEBUG') > 1:
+                logging.debug(f'ROFEXClient ECEPTION RECEIVED: {e.message}')
 
     def order_report_handler(self, message):
         """
@@ -90,7 +92,7 @@ class ROFEXClient:
         :type message: Dict.
         """
         # TODO implement
-        print("Order Report Message Received: {0}".format(message))
+        self.process_order_report_message(message)
 
     def error_handler(self, message):
         """
@@ -103,7 +105,7 @@ class ROFEXClient:
             logging.debug(f'ROFEXClient ERROR: Error message received {message}')
 
         print(dash_line)
-        error_msg = f"\033[0;30;47mERROR: MESSAGE RECEIVED \"{message.get('description')}\". \nCheck log file " \
+        error_msg = f"\033[0;30;47mERROR: \"{message.get('description')}\". \nCheck log file " \
                     "for detailed error message.\033[1;37;40m"
         print(error_msg)
 
@@ -113,8 +115,13 @@ class ROFEXClient:
         :param message: Message received. Comes as a JSON.
         :type message: Dict.
         """
-        # TODO implement
-        print("Exception Occurred: {0}".format(e.message))
+        print(dash_line)
+        error_msg = f"\033[0;30;47mERROR: EXCEPTION OCCURED\nCheck log file " \
+                    "for detailed error message.\033[1;37;40m"
+        print(error_msg)
+
+        if logging.getLevelName('DEBUG') > 1:
+            logging.debug(f'ROFEXClient ECEPTION RECEIVED: {e.message}')
 
     # ==================================================================================================================
     #   End HANDLERS definition
@@ -158,7 +165,9 @@ class ROFEXClient:
 
             pyRofex.init_websocket_connection(market_data_handler=self.market_data_handler,
                                               error_handler=self.error_handler,
-                                              exception_handler=self.exception_handler)
+                                              exception_handler=self.exception_handler,
+                                              order_report_handler=self.order_report_handler)
+
         except Exception as e:
             if logging.getLevelName('DEBUG') > 1:
                 logging.debug(f'ROFEXClient ERROR: En exception occurred {e}')
@@ -216,7 +225,7 @@ class ROFEXClient:
             print(error_msg)
             print(dash_line)
 
-    def subscribe_order_report(self, args):
+    def subscribe_order_report(self):
         """
         Subscribes to MarketData for specified products.
         (Each given Ticker HAS to be a str inside a one element list).
@@ -224,8 +233,17 @@ class ROFEXClient:
         :type args: list of list
         """
         # TODO implement
-        pass
-
+        try:
+            print("Subscribe to OrderReport")
+            pyRofex.order_report_subscription()
+        except Exception as e:
+            if logging.getLevelName('DEBUG') > 1:
+                logging.debug(f'ROFEXClient ERROR: En exception occurred {e}')
+            e = str(e).upper()
+            error_msg = f"\033[0;30;47mERROR: {e} Check log file " \
+                        "for detailed error message.\033[1;37;40m"
+            print(error_msg)
+            print(dash_line)
         """
         entries = [pyRofex.MarketDataEntry.BIDS,
                    pyRofex.MarketDataEntry.OFFERS,
@@ -283,7 +301,7 @@ class ROFEXClient:
                 full_book_df.fillna(0, inplace=True)
                 lk.acquire()
                 print(dash_line)
-                msg_centered = f"{ticker} - MarketData".ljust(width, ' ')
+                msg_centered = f"   {ticker} - MarketData".ljust(width, ' ')
                 md_header = f"\033[0;30;47m{msg_centered}\033[1;37;40m"
                 print(md_header)
                 print("   BID         ASK")
@@ -305,6 +323,53 @@ class ROFEXClient:
             traceback.print_exc()
             pass
 
+    def process_order_report_message(self, message):
+
+        orderId = ""
+        side = ""
+        ticker = ""
+        orderQty = ""
+        price = ""
+        status = ""
+
+        try:
+            orderId = message.get('orderReport').get('orderId')
+        except Exception:
+            pass
+
+        try:
+            side = message.get('orderReport').get('side')
+        except Exception:
+            pass
+
+        try:
+            ticker = message.get('orderReport').get('instrumentId').get('symbol')
+        except Exception:
+            pass
+
+        try:
+            orderQty = message.get('orderReport').get('orderQty')
+        except Exception:
+            pass
+
+        try:
+            price = message.get('orderReport').get('price')
+        except Exception:
+            pass
+
+        try:
+            status = message.get('orderReport').get('status')
+        except Exception:
+            pass
+
+        lk.acquire()
+        print(dash_line)
+        msg_centered = f"   {ticker} - {status} Order".ljust(width, ' ')
+        md_header = f"\033[0;30;47m{msg_centered}\033[1;37;40m"
+        print(md_header)
+        print(orderId, side, ticker, orderQty, price, status)
+        lk.release()
+
     def placer_order(self, ticker, order_side, order_price, order_qty):
         # TODO implement
         # TODO Atento al parametro cancel_previous
@@ -312,7 +377,7 @@ class ROFEXClient:
         if order_side.lower() == 'buy':
             order_side = pyRofex.Side.BUY
         elif order_side.lower() == 'sell':
-            order_side = pyRofex.side.BUY
+            order_side = pyRofex.Side.BUY
         else:
             raise IncorrectOrderSide
 
@@ -326,17 +391,7 @@ class ROFEXClient:
                                        price=order_price,
                                        order_type=pyRofex.OrderType.LIMIT)
             lk.acquire()
-            print(dash_line)
-            print(f"----------- Send Order Response: ".ljust(width, '-'))
-            pprint(order)
             active_orders.append(order)
-            lk.release()
-
-            order_status = pyRofex.get_order_status(order["order"]["clientId"])
-            lk.acquire()
-            print(dash_line)
-            print(f"----------- Order Status Response: ".ljust(width, '-'))
-            pprint(order_status)
             lk.release()
 
         except Exception as e:
@@ -380,6 +435,14 @@ class ROFEXClient:
 
     def get_order_status(self):
         # TODO implement
+        """
+        order_status = pyRofex.get_order_status(order["order"]["clientId"])
+        lk.acquire()
+        print(dash_line)
+        print(f"----------- Order Status Response: ".ljust(width, '-'))
+        pprint(order_status)
+        lk.release()
+        """
         pass
 
     def get_all_order_status(self):
@@ -441,27 +504,56 @@ class ROFEXClient:
         # TODO implement
         pass
 
-    def get_market_price(self, ticker):
+    def get_market_price(self, ticker, side):
         # TODO implement
-        ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
-        full_book = pyRofex.get_market_data(ticker, ticker_entries)
-        market_price = float(full_book.get('marketData').get('BI')[0].get('price'))
+
+        if side == "buy":
+            ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
+            full_book = pyRofex.get_market_data(ticker, ticker_entries)
+            market_price = float(full_book.get('marketData').get('OF')[0].get('price'))
+
+        else:
+            ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
+            full_book = pyRofex.get_market_data(ticker, ticker_entries)
+            market_price = float(full_book.get('marketData').get('BI')[0].get('price'))
+
         return market_price
 
     def get_quoting_price(self, price):
+        # TODO implement
         quoting_price = price + 0.05
         return quoting_price
 
-    def get_market_qty(self, ticker):
+    def get_market_qty(self, ticker, side):
         # TODO implement
-        ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
-        full_book = pyRofex.get_market_data(ticker, ticker_entries)
-        market_qty = float(full_book.get('marketData').get('OF')[0].get('size'))
+
+        if side == "buy":
+            ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
+            full_book = pyRofex.get_market_data(ticker, ticker_entries)
+            market_qty = float(full_book.get('marketData').get('OF')[0].get('size'))
+
+        else:
+            ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
+            full_book = pyRofex.get_market_data(ticker, ticker_entries)
+            market_qty = float(full_book.get('marketData').get('BI')[0].get('size'))
+
         return market_qty
 
     def get_quoting_qty(self, qty):
         # TODO implement
         pass
+
+    def build_market_order(self, ticker, side):
+        price = rofex_client.get_market_price(ticker, side)
+        quantity = rofex_client.get_market_qty(ticker, side)
+
+        if side == "sell":
+            rofex_client.placer_order(ticker, "sell", price + 0.5, quantity)
+        else:
+            rofex_client.placer_order(ticker, "buy", price - 0.5, quantity)
+
+    def send_market_order(self, ticker, side, size, order_type):
+        pyRofex.send_order(ticker=ticker, side=side, size=size, order_type=order_type)
 
     # ==================================================================================================================
     #   End UTILITY FUNCTIONS definition
@@ -470,6 +562,17 @@ class ROFEXClient:
 
 class IncorrectOrderSide(Exception):
     pass
+
+
+class Order:
+    def __init__(self, ticker, side, price, qty):
+        self.ticker = ticker
+        self.side = side
+        self.price = price
+        self.qty = qty
+
+    def get_order(self):
+        return [self.ticker, self.side, self.price, self.qty]
 
 
 def clear_screen():
@@ -486,18 +589,31 @@ def clear_screen():
         _ = system('clear')
 
 
+def build_header():
+    # TODO
+    pass
+
+
 if __name__ == '__main__':
     rofex_client = ROFEXClient("fedejbrun5018", "ugklxY0*", "REM5018", "demo")
     rofex_client.subscribe_instruments([["GGALOct20"], ["GGALDic20"], ["instrumento"]])
+    rofex_client.subscribe_order_report()
 
+    rofex_client.build_market_order("GGALOct20", "buy")
+
+    """
     price = rofex_client.get_market_price("GGALOct20")
     quoting_price = rofex_client.get_quoting_price(price)
     quantity = rofex_client.get_market_qty("GGALOct20")
-    rofex_client.placer_order("GGALOct20", "buy", price, 1)
+    order = build_market_order("GGALOct20", "sell")
+    rofex_client.placer_order("GGALOct20", "sell", price + 0.5, quantity)
+
+    price = rofex_client.get_market_price("GGALDic20")
+    quantity = rofex_client.get_market_qty("GGALDic20")
+    rofex_client.placer_order("GGALOct20", "buy", price - 0.5, quantity)
+
     price = rofex_client.get_market_price("GGALOct20")
-    rofex_client.placer_order("GGALOct20", "buy", price + 0.5, 1)
-    price = rofex_client.get_market_price("GGALOct20")
-    rofex_client.placer_order("GGALOct20", "buy", price + 0.5, 1)
+    rofex_client.placer_order("GGALOct20", "buy", price - 0.5, quantity)
 
     rofex_client.get_all_order_status()
 
@@ -506,11 +622,10 @@ if __name__ == '__main__':
     print(dash_line)
     print("CANCEL ORDERS")
     lk.release()
-
     for order in active_orders:
         time.sleep(3)
         cancel_orderId = order.get('order').get('clientId')
-        rofex_client.cancel_order(cancel_orderId)
+        rofex_client.cancel_order(cancel_orderId)"""
 
     while True:
         try:
