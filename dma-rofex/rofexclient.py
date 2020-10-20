@@ -47,8 +47,9 @@ class ROFEXClient:
         # Create logging file
         # TODO Implementar validacion para Windows/Linux
         self.session_time = dt.datetime.now()
-        filename = f'c:/logs/ROFEX{env_param}{self.session_time.year}-{self.session_time.month}-' \
-                   f'{self.session_time.hour}_{self.session_time.second}.log'
+        filename = f'c:/logs/ROFEX{env_param}-{self.session_time.year}{self.session_time.month}' \
+                   f'{self.session_time.day}{self.session_time.hour}{self.session_time.minute}' \
+                   f'{self.session_time.second}.log'
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
 
         # TODO No entiendo muy bien cual es la funcion de los AddLevelName
@@ -362,6 +363,9 @@ class ROFEXClient:
             status = message.get('orderReport').get('status')
         except Exception:
             pass
+
+        if logging.getLevelName('DEBUG') > 1:
+            logging.debug(f'ROFEXClient: Received {str(status)} order.')
 
         lk.acquire()
         print(dash_line)
