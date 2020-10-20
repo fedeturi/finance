@@ -433,6 +433,9 @@ class ROFEXClient:
             print(error_msg)
             print(dash_line)
 
+    def cancel_all_orders(self, ClOrdId):
+        # TODO implement
+
     def get_order_status(self):
         # TODO implement
         """
