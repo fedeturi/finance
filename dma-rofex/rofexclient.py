@@ -83,7 +83,7 @@ class ROFEXClient:
 
         except Exception as e:
             if logging.getLevelName('DEBUG') > 1:
-                logging.debug(f'ROFEXClient ECEPTION RECEIVED: {e.message}')
+                logging.debug(f'ROFEXClient EXCEPTION RECEIVED: {e.message}')
 
     def order_report_handler(self, message):
         """
@@ -280,6 +280,7 @@ class ROFEXClient:
         """
 
         try:
+            pprint(message)
             ticker = message.get('instrumentId').get('symbol')
             ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
             full_book = pyRofex.get_market_data(ticker, ticker_entries, depth=10)
@@ -435,6 +436,7 @@ class ROFEXClient:
 
     def cancel_all_orders(self, ClOrdId):
         # TODO implement
+        pass
 
     def get_order_status(self):
         # TODO implement
