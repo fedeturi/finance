@@ -417,9 +417,11 @@ class ROFEXClient:
             print(error_msg)
             print(dash_line)
 
-    def get_market_data(self):
+    def get_market_data(self, ticker):
         # TODO implement
-        pass
+        ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
+        full_book = pyRofex.get_market_data(ticker, ticker_entries, depth=10)
+        pprint(full_book)
 
     def get_segments(self):
         # TODO implement
@@ -486,35 +488,3 @@ def clear_screen():
         _ = system('clear')
 
 
-if __name__ == '__main__':
-    rofex_client = ROFEXClient("fedejbrun5018", "ugklxY0*", "REM5018", "demo")
-    rofex_client.subscribe_instruments([["GGALOct20"], ["GGALDic20"], ["instrumento"]])
-
-    price = rofex_client.get_market_price("GGALOct20")
-    quoting_price = rofex_client.get_quoting_price(price)
-    quantity = rofex_client.get_market_qty("GGALOct20")
-    rofex_client.placer_order("GGALOct20", "buy", price, 1)
-    price = rofex_client.get_market_price("GGALOct20")
-    rofex_client.placer_order("GGALOct20", "buy", price + 0.5, 1)
-    price = rofex_client.get_market_price("GGALOct20")
-    rofex_client.placer_order("GGALOct20", "buy", price + 0.5, 1)
-
-    rofex_client.get_all_order_status()
-
-    time.sleep(6)
-    lk.acquire()
-    print(dash_line)
-    print("CANCEL ORDERS")
-    lk.release()
-
-    for order in active_orders:
-        time.sleep(3)
-        cancel_orderId = order.get('order').get('clientId')
-        rofex_client.cancel_order(cancel_orderId)
-
-    while True:
-        try:
-            for _ in range(1):
-                pass
-        except KeyboardInterrupt:
-            rofex_client.disconnect()
