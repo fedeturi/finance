@@ -11,10 +11,8 @@ import datetime as dt
 
 import pyRofex
 
-width = os.get_terminal_size().columns
+width = 10 # os.get_terminal_size().columns
 dash_line = "-" * width
-active_orders = []
-lk = Lock()
 
 
 class ROFEXClient:
@@ -31,16 +29,18 @@ class ROFEXClient:
     """
     def __init__(self, user, password, account, environment, verbose=3):
 
-        self.subscribed_instruments = []
+        self.subscribed_products = []
         self.user = user
         self.password = password
         self.account = account
+        self.active_orders = []
+        self.lk = Lock()
 
         # Define environment
-        env_param = environment.lower()
+        env_param = environment.upper()
         environments = {
-            'demo': pyRofex.Environment.REMARKET,
-            'live': pyRofex.Environment.LIVE,
+            'DEMO': pyRofex.Environment.REMARKET,
+            'LIVE': pyRofex.Environment.LIVE,
         }
         self.env = environments.get(env_param)
 
@@ -50,7 +50,7 @@ class ROFEXClient:
         filename = f'c:/logs/ROFEX{env_param}-{self.session_time.year}{self.session_time.month}' \
                    f'{self.session_time.day}{self.session_time.hour}{self.session_time.minute}' \
                    f'{self.session_time.second}.log'
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(exception_message)s', filename=filename)
 
         # TODO No entiendo muy bien cual es la funcion de los AddLevelName
 
@@ -62,7 +62,7 @@ class ROFEXClient:
         elif verbosity == '3':
             logging.addLevelName('DEBUG', 30)
         else:
-            logging.basicConfig(level=None, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+            logging.basicConfig(level=None, format='%(asctime)s-%(threadName)s-%(exception_message)s', filename=filename)
             logging.addLevelName('DEBUG', 30)
 
         try:
@@ -84,7 +84,7 @@ class ROFEXClient:
 
         except Exception as e:
             if logging.getLevelName('DEBUG') > 1:
-                logging.debug(f'ROFEXClient EXCEPTION RECEIVED: {e.message}')
+                logging.debug(f'ROFEXClient MDHandler Exception: {e.message}')
 
     def order_report_handler(self, message):
         """
@@ -93,7 +93,12 @@ class ROFEXClient:
         :type message: Dict.
         """
         # TODO implement
-        self.process_order_report_message(message)
+        try:
+            self.process_order_report_message(message)
+
+        except Exception as e:
+            if logging.getLevelName('DEBUG') > 1:
+                logging.debug(f'ROFEXClient ORHandler Exception: {e.message}')
 
     def error_handler(self, message):
         """
@@ -103,26 +108,27 @@ class ROFEXClient:
         """
         # TODO implement
         if logging.getLevelName('DEBUG') > 1:
-            logging.debug(f'ROFEXClient ERROR: Error message received {message}')
+            logging.debug(f'ROFEXClient ERROR Handler: Received {message}')
 
         print(dash_line)
         error_msg = f"\033[0;30;47mERROR: \"{message.get('description')}\". \nCheck log file " \
-                    "for detailed error message.\033[1;37;40m"
+                    "for detailed error exception_message.\033[1;37;40m"
         print(error_msg)
 
-    def exception_handler(self, e):
+    def exception_handler(self, exception_message):
         """
         Handles Exception Messages received from server.
-        :param message: Message received. Comes as a JSON.
-        :type message: Dict.
+        :param exception_message: Message received. Comes as a JSON.
+        :type exception_message: Dict.
         """
+        # TODO evaluar mejor como manejar las posibles excepciones recibidas
         print(dash_line)
         error_msg = f"\033[0;30;47mERROR: EXCEPTION OCCURED\nCheck log file " \
-                    "for detailed error message.\033[1;37;40m"
+                    "for detailed error exception_message.\033[1;37;40m"
         print(error_msg)
 
         if logging.getLevelName('DEBUG') > 1:
-            logging.debug(f'ROFEXClient ECEPTION RECEIVED: {e.message}')
+            logging.debug(f'ROFEXClient EXCEPTION Handler: Received {exception_message.message}')
 
     # ==================================================================================================================
     #   End HANDLERS definition
@@ -132,7 +138,7 @@ class ROFEXClient:
     #   Start UTILITY FUNCTIONS definition
     # ==================================================================================================================
 
-    def connect(self, user, password, account, environment ):
+    def connect(self, user, password, account, environment):
         """
         Implements Connection to ROFEX DMA Server.
         (demo = reMarkets; live = ROFEX)
@@ -174,7 +180,7 @@ class ROFEXClient:
                 logging.debug(f'ROFEXClient ERROR: En exception occurred {e}')
 
             error_msg = "\033[0;30;47mERROR: CONNECTION ERROR. Check log file " \
-                        "for detailed error message.\033[1;37;40m"
+                        "for detailed error exception_message.\033[1;37;40m"
             print(error_msg)
             print(dash_line)
 
@@ -193,9 +199,9 @@ class ROFEXClient:
         pyRofex.close_websocket_connection()
         sys.exit(0)
 
-    def subscribe_instruments(self, args):
+    def subscribe_products(self, args):
         """
-        Subscribes to MarketData for specified products.
+        Subscribes to MarketData for specified product/s.
         (Each given Ticker HAS to be a str inside a one element list).
         :param args: List of tickers to subscribe to MarketData.
         :type args: list of list
@@ -206,7 +212,7 @@ class ROFEXClient:
                    pyRofex.MarketDataEntry.LAST]
         try:
             for instrument in args:
-                self.subscribed_instruments.append(instrument)
+                self.subscribed_products.append(instrument)
 
                 if logging.getLevelName('DEBUG') > 1:
                     logging.debug(f'ROFEXClient: Subscribing to {instrument} MarketData')
@@ -222,18 +228,17 @@ class ROFEXClient:
                 logging.debug(f'ROFEXClient ERROR: En exception occurred {e}')
             e = str(e).upper()
             error_msg = f"\033[0;30;47mERROR: {e} Check log file " \
-                        "for detailed error message.\033[1;37;40m"
+                        "for detailed error exception_message.\033[1;37;40m"
             print(error_msg)
             print(dash_line)
 
     def subscribe_order_report(self):
         """
-        Subscribes to MarketData for specified products.
-        (Each given Ticker HAS to be a str inside a one element list).
-        :param args: List of tickers to subscribe to MarketData.
-        :type args: list of list
+        Subscribes to OrderReport service (ExecutionReport in FIX) for
+        this account.
         """
-        # TODO implement
+        # TODO evaluar si es necesario implementar Snapshot
+        # TODO evaluar si es necesario para mas de una cuenta/environment
         try:
             print("Subscribe to OrderReport")
             pyRofex.order_report_subscription()
@@ -242,35 +247,9 @@ class ROFEXClient:
                 logging.debug(f'ROFEXClient ERROR: En exception occurred {e}')
             e = str(e).upper()
             error_msg = f"\033[0;30;47mERROR: {e} Check log file " \
-                        "for detailed error message.\033[1;37;40m"
+                        "for detailed error exception_message.\033[1;37;40m"
             print(error_msg)
             print(dash_line)
-        """
-        entries = [pyRofex.MarketDataEntry.BIDS,
-                   pyRofex.MarketDataEntry.OFFERS,
-                   pyRofex.MarketDataEntry.LAST]
-        try:
-            for instrument in args:
-                self.subscribed_instruments.append(instrument)
-
-                if logging.getLevelName('DEBUG') > 1:
-                    logging.debug(f'ROFEXClient: Subscribing to {instrument} MarketData')
-
-                message = f'Subscribing to {instrument[0]} MarketData'
-                print(message)
-
-                pyRofex.market_data_subscription(tickers=instrument,
-                                                 entries=entries)
-        except Exception as e:
-
-            if logging.getLevelName('DEBUG') > 1:
-                logging.debug(f'ROFEXClient ERROR: En exception occurred {e}')
-            e = str(e).upper()
-            error_msg = f"\033[0;30;47mERROR: {e} Check log file " \
-                        "for detailed error message.\033[1;37;40m"
-            print(error_msg)
-            print(dash_line)
-        """
 
     def process_market_data_message(self, message):
         """
@@ -301,7 +280,7 @@ class ROFEXClient:
                 full_book_df = pd.concat([bid_book_df, ask_book_df], axis=1)
                 full_book_df = full_book_df[['BS', 'BP', 'OP', 'OS']]
                 full_book_df.fillna(0, inplace=True)
-                lk.acquire()
+                self.lk.acquire()
                 print(dash_line)
                 msg_centered = f"   {ticker} - MarketData".ljust(width, ' ')
                 md_header = f"\033[0;30;47m{msg_centered}\033[1;37;40m"
@@ -310,16 +289,16 @@ class ROFEXClient:
                 print(full_book_df)
                 print("\nTop:", full_book_df['BS'].iloc[0], full_book_df['BP'].iloc[0],
                       full_book_df['OP'].iloc[0], full_book_df['OS'].iloc[0])
-                lk.release()
+                self.lk.release()
 
             else:
                 empty_MD = pd.DataFrame.from_dict({'BS': [0], 'BP': [0],  'OP': [0], 'OS': [0]})
-                lk.acquire()
+                self.lk.acquire()
                 print(dash_line)
                 print(f"----------- {ticker} - MarketData ".ljust(width, '-'))
                 print("   BID              ASK")
                 print(empty_MD)
-                lk.release()
+                self.lk.release()
 
         except Exception:
             traceback.print_exc()
@@ -367,43 +346,54 @@ class ROFEXClient:
         if logging.getLevelName('DEBUG') > 1:
             logging.debug(f'ROFEXClient: Received {str(status)} order.')
 
-        lk.acquire()
+        self.lk.acquire()
         print(dash_line)
         msg_centered = f"   {ticker} - {status} Order".ljust(width, ' ')
         md_header = f"\033[0;30;47m{msg_centered}\033[1;37;40m"
         print(md_header)
         print(orderId, side, ticker, orderQty, price, status)
-        lk.release()
+        self.lk.release()
 
-    def placer_order(self, ticker, order_side, order_price, order_qty):
-        # TODO implement
+    def place_order(self, ticker, side, price, qty):
+        """
+        Sends LIMIT order request to server and stores response in active_orders list.
+        :param ticker: Product ticker.
+        :type ticker: Str.
+        :param side: Side for order.
+        :type side: Str.
+        :param price: Price for order.
+        :type price: Float.
+        :param qty: Quantity for order.
+        :type qty: Int.
+        """
         # TODO Atento al parametro cancel_previous
 
-        if order_side.lower() == 'buy':
-            order_side = pyRofex.Side.BUY
-        elif order_side.lower() == 'sell':
-            order_side = pyRofex.Side.BUY
+        if side.lower() == 'buy':
+            side = pyRofex.Side.BUY
+        elif side.lower() == 'sell':
+            side = pyRofex.Side.BUY
         else:
             raise IncorrectOrderSide
 
         if logging.getLevelName('DEBUG') > 1:
-            logging.debug(f'ROFEXClient: Sending {str(order_side).split(".")[-1]} order.')
+            logging.debug(f'ROFEXClient: Sending {str(side).split(".")[-1]} order.')
 
         try:
             order = pyRofex.send_order(ticker=ticker,
-                                       side=order_side,
-                                       size=order_qty,
-                                       price=order_price,
+                                       side=side,
+                                       size=qty,
+                                       price=price,
                                        order_type=pyRofex.OrderType.LIMIT)
-            lk.acquire()
-            active_orders.append(order)
-            lk.release()
+            self.acquire()
+            # TODO append solamente si status es OK
+            self.active_orders.append(order)
+            self.lk.release()
 
         except Exception as e:
             if logging.getLevelName('DEBUG') > 1:
                 logging.debug(f'ROFEXClient ERROR: En exception occurred {e}')
 
-            error_msg = "\033[0;30;47mERROR: Check log file for detailed error message.\033[1;37;40m"
+            error_msg = "\033[0;30;47mERROR: Check log file for detailed error exception_message.\033[1;37;40m"
             print(error_msg)
             print(dash_line)
 
@@ -412,34 +402,40 @@ class ROFEXClient:
         # TODO implement
 
         if logging.getLevelName('DEBUG') > 1:
-            logging.debug(f'ROFEXClient: Sending cancel message for order {ClOrdId}')
+            logging.debug(f'ROFEXClient: Sending cancel exception_message for order {ClOrdId}')
 
         try:
             cancel_order = pyRofex.cancel_order(ClOrdId)
 
-            lk.acquire()
+            self.lk.acquire()
             print(dash_line)
             print(f"----------- Cancel Order Response: ".ljust(width, '-'))
             pprint(cancel_order)
-            lk.release()
+            self.lk.release()
 
             order_status = pyRofex.get_order_status(ClOrdId)
-            lk.acquire()
+            self.lk.acquire()
             print(dash_line)
             print(f"----------- Cancel Order Status Response: ".ljust(width, '-'))
             pprint(order_status)
-            lk.release()
+            self.lk.release()
 
         except Exception as e:
             if logging.getLevelName('DEBUG') > 1:
                 logging.debug(f'ROFEXClient ERROR: En exception occurred {e}')
 
-            error_msg = "\033[0;30;47mERROR: Check log file for detailed error message.\033[1;37;40m"
+            error_msg = "\033[0;30;47mERROR: Check log file for detailed error exception_message.\033[1;37;40m"
             print(error_msg)
             print(dash_line)
 
     def cancel_all_orders(self, ClOrdId):
         # TODO implement
+        """
+        for order in active_orders:
+            time.sleep(3)
+            cancel_orderId = order.get('order').get('clientId')
+            rofex_client.cancel_order(cancel_orderId)
+            """
         pass
 
     def get_order_status(self):
@@ -475,17 +471,17 @@ class ROFEXClient:
                 if ord_time > self.session_time:
                     session_orders.append(order)
 
-            lk.acquire()
+            self.lk.acquire()
             print(dash_line)
             print(f"----------- All Orders Status: ".ljust(width, '-'))
             pprint(session_orders)
-            lk.release()
+            self.lk.release()
 
         except Exception as e:
             if logging.getLevelName('DEBUG') > 1:
                 logging.debug(f'ROFEXClient ERROR: En exception occurred {e}')
 
-            error_msg = "\033[0;30;47mERROR: Check log file for detailed error message.\033[1;37;40m"
+            error_msg = "\033[0;30;47mERROR: Check log file for detailed error exception_message.\033[1;37;40m"
             print(error_msg)
             print(dash_line)
 
@@ -557,12 +553,9 @@ class ROFEXClient:
         quantity = rofex_client.get_market_qty(ticker, side)
 
         if side == "sell":
-            rofex_client.placer_order(ticker, "sell", price + 0.5, quantity)
+            rofex_client.place_order(ticker, "sell", price + 0.5, quantity)
         else:
-            rofex_client.placer_order(ticker, "buy", price - 0.5, quantity)
-
-    def send_market_order(self, ticker, side, size, order_type):
-        pyRofex.send_order(ticker=ticker, side=side, size=size, order_type=order_type)
+            rofex_client.place_order(ticker, "buy", price - 0.5, quantity)
 
     # ==================================================================================================================
     #   End UTILITY FUNCTIONS definition
@@ -604,8 +597,8 @@ def build_header():
 
 
 if __name__ == '__main__':
-    rofex_client = ROFEXClient("fedejbrun5018", "ugklxY0*", "REM5018", "demo")
-    rofex_client.subscribe_instruments([["GGALOct20"], ["GGALDic20"], ["instrumento"]])
+    rofex_client = ROFEXClient("fedejbrun5018", "ugklxY0*", "REM5018", "DEMO")
+    rofex_client.subscribe_products([["GGALOct20"], ["GGALDic20"], ["instrumento"]])
     rofex_client.subscribe_order_report()
 
     rofex_client.build_market_order("GGALOct20", "buy")
@@ -615,14 +608,14 @@ if __name__ == '__main__':
     quoting_price = rofex_client.get_quoting_price(price)
     quantity = rofex_client.get_market_qty("GGALOct20")
     order = build_market_order("GGALOct20", "sell")
-    rofex_client.placer_order("GGALOct20", "sell", price + 0.5, quantity)
+    rofex_client.place_order("GGALOct20", "sell", price + 0.5, quantity)
 
     price = rofex_client.get_market_price("GGALDic20")
     quantity = rofex_client.get_market_qty("GGALDic20")
-    rofex_client.placer_order("GGALOct20", "buy", price - 0.5, quantity)
+    rofex_client.place_order("GGALOct20", "buy", price - 0.5, quantity)
 
     price = rofex_client.get_market_price("GGALOct20")
-    rofex_client.placer_order("GGALOct20", "buy", price - 0.5, quantity)
+    rofex_client.place_order("GGALOct20", "buy", price - 0.5, quantity)
 
     rofex_client.get_all_order_status()
 

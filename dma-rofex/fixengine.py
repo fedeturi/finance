@@ -5,7 +5,7 @@ CLASSES:
 FIXEngine --------------------------------- Implementation of a FIX Engine.
 
     FIELDS:
-    protocol_type_head -------------------- FIX message header. Always '8=FIXT.1.1|'.
+    protocol_type_head -------------------- FIX exception_message header. Always '8=FIXT.1.1|'.
 
     METHODS:
     bid_ask_data_request_msg()------------- Request snapshot and updates of market depth.
@@ -19,24 +19,24 @@ FIXEngine --------------------------------- Implementation of a FIX Engine.
     extract_leavesQty() ------------------- Return quantity open for further execution.
     extract_market_changes() -------------- Return market changes for bid and ask books.
     extract_market_segments() ------------- Return market segment.
-    extract_msg_tye() --------------------- Return FIX message type.
+    extract_msg_tye() --------------------- Return FIX exception_message type.
     extract_OrderID() --------------------- Return unique OrderID assigned by sell-side.
     extract_price_fill() ------------------ Return price of this last fill.
     extract_qty_fill() -------------------- Return quantity bought/sold on this last fill.
-    extract_sec_number() ------------------ Return Integer message sequence number.
+    extract_sec_number() ------------------ Return Integer exception_message sequence number.
     extract_symbol() ---------------------- Return Ticker Symbol.
     extract_symbol_tick() ----------------- Return Ticker Symbol.
-    header_msg() -------------------------- Build FIX message header.
+    header_msg() -------------------------- Build FIX exception_message header.
     list_request_msg() -------------------- Request snapshots and updates of all securities subscribed.
     log_out() ----------------------------- Log out from server.
     logon() ------------------------------- Logon to server.
     msg_Heartbeat() ----------------------- Send heartbeat.
-    msg_TestRequest() --------------------- Add identifier included in Test Request message to be returned in
+    msg_TestRequest() --------------------- Add identifier included in Test Request exception_message to be returned in
     --------------------------------------- resulting Heartbeat. ('TestReqIDtemp')
-    order_mass_cancel_request_msg() ------- Return OrderMassCancelRequest message
+    order_mass_cancel_request_msg() ------- Return OrderMassCancelRequest exception_message
     order_status_msg() -------------------- Status of specific Order.
     place_order_msg() --------------------- Place new Order.
-    ResendRequest() ----------------------- ResendRequest of an incomplete message
+    ResendRequest() ----------------------- ResendRequest of an incomplete exception_message
     symbol_right() ------------------------ Return True if symbol ticker belongs to market list, False otherwise.
     trade_report_msg() -------------------- Request trading report of fills and orders.
     unsubscribe_bid_ask_data_request_msg()- Unsubscribe snapshot and updates request.
@@ -62,7 +62,7 @@ class FIXEngine(object):
 
     def header_msg(self, tag):
         """
-        Return standard FIX message header with MsgType = tag.
+        Return standard FIX exception_message header with MsgType = tag.
         """
 
         # Build msg seq_nu from all messages sent to server.
@@ -84,7 +84,7 @@ class FIXEngine(object):
 
     def logon(self):
         """
-        Return LogOn message.
+        Return LogOn exception_message.
         """
         msg = self.header_msg("A")
         msg.append_pair(98, "0")                # EncryptMethod: None / Other
@@ -96,20 +96,20 @@ class FIXEngine(object):
 
     def log_out(self):
         """
-        Return LogOut message.
+        Return LogOut exception_message.
         """
         msg = self.header_msg("5")
         return msg
 
     def msg_Heartbeat(self):
         """
-        Return HeartBeat message.
+        Return HeartBeat exception_message.
         """
         return self.header_msg("0")
 
     def msg_TestReq(self):
         """
-        Return TestReqID message.
+        Return TestReqID exception_message.
         """
         global TestReqID
 
@@ -122,7 +122,7 @@ class FIXEngine(object):
 
     def list_request_msg(self):
         """
-        Return SecurityListRequest message.
+        Return SecurityListRequest exception_message.
         """
         msg = self.header_msg("x")  # MsgType                               (35) = (x) SecurityListRequest
         msg.append_pair(263, "1")  # SubscriptionRequestType               (263) = (1) Snapshot + Updates (Subscribe)
@@ -132,7 +132,7 @@ class FIXEngine(object):
 
     def bid_ask_data_request_msg(self, prod, max_depth=2):
         """
-        Return MarketDataRequest Subscribe message and MDReqIDtemp.
+        Return MarketDataRequest Subscribe exception_message and MDReqIDtemp.
         """
         global MDReqID
 
@@ -156,7 +156,7 @@ class FIXEngine(object):
 
     def order_mass_cancel_request_msg(self):
         """
-        Return OrderMassCancelRequest message.
+        Return OrderMassCancelRequest exception_message.
         """
         global ClOrdID
 
@@ -174,7 +174,7 @@ class FIXEngine(object):
 
     def order_status_msg(self, OrderID, prod, side):
         """
-        Return OrderStatusRequest message.
+        Return OrderStatusRequest exception_message.
         """
         msg = self.header_msg("H")
         msg.append_pair(37, OrderID)  # OrderID                             (37) = OrderID
@@ -188,7 +188,7 @@ class FIXEngine(object):
 
     def place_order_msg(self, prod, price, qty, side, ClOrdID_temp,account):
         """
-        Return NewOrderSingle message.
+        Return NewOrderSingle exception_message.
         """
         msg = self.header_msg("D")
         msg.append_pair(1, account)  # Account                               (1) = account
@@ -203,7 +203,7 @@ class FIXEngine(object):
 
     def cancel_order_msg(self, prod, qty, side, OrigClOrdID, ClOrdID_temp, account):
         """
-        Return OrderCancelRequest message.
+        Return OrderCancelRequest exception_message.
         """
         msg = self.header_msg("F")
         msg.append_pair(1, account)  # Account                               (1) = account
@@ -221,7 +221,7 @@ class FIXEngine(object):
 
     def change_order_msg(self, prod, price, qty, side, OrigClOrdID, ClOrdID_temp, account):
         """
-        Return OrderCancelReplaceRequest message.
+        Return OrderCancelReplaceRequest exception_message.
         """
         msg = self.header_msg("G")
         msg.append_pair(1, account)  # Account                               (1) = account
@@ -241,7 +241,7 @@ class FIXEngine(object):
 
     def ResendRequest(self, BeginSeqNo, EndSeqNo):
         """
-        Return ResendRequest message.
+        Return ResendRequest exception_message.
         """
         msg = self.header_msg("2")
         msg.append_pair(7, BeginSeqNo)  # BeginSeqNo                         (7) = BeginSeqNo
@@ -250,7 +250,7 @@ class FIXEngine(object):
 
     def unsubscribe_bid_ask_data_request_msg(self, prod, MDReqID, max_depth=5):
         """
-        Return MarketDataRequest Unsubscribe message .
+        Return MarketDataRequest Unsubscribe exception_message .
         """
         msg = self.header_msg("V")
         msg.append_pair(262, MDReqID)  # MDReqID                           (262) = MDReqIDtemp
@@ -268,7 +268,7 @@ class FIXEngine(object):
 
     def trade_report_msg(self):
         """
-        Return TradeCaptureReportRequest message.
+        Return TradeCaptureReportRequest exception_message.
         """
         global TradeRequestID
         TradeRequestID[0] += 1
@@ -286,7 +286,7 @@ class FIXEngine(object):
 
     def extract_symbol(self, msg):
         """
-        Return Ticker Symbol, extracted from FIX message.
+        Return Ticker Symbol, extracted from FIX exception_message.
         """
         return msg.get(55).decode("cp1252")
 
@@ -306,31 +306,31 @@ class FIXEngine(object):
 
     def extract_OrderID(self, msg):
         """
-        Return OrderID, extracted from FIX message.
+        Return OrderID, extracted from FIX exception_message.
         """
         return msg.get(37).decode("cp1252")
 
     def extract_market_segment(self, msg):
         """
-        Return Market Segment, extracted from FIX message.
+        Return Market Segment, extracted from FIX exception_message.
         """
         return msg.get(1300).decode("cp1252")
 
     def extract_CumQty(self, msg):
         """
-        Return CumQty (Total quantity filled), extracted from FIX message.
+        Return CumQty (Total quantity filled), extracted from FIX exception_message.
         """
         return int(float(msg.get(14)))
 
     def extract_avgPx(self, msg):
         """
-        Return AvgPx (Calculated average price of all fills on this order), extracted from FIX message.
+        Return AvgPx (Calculated average price of all fills on this order), extracted from FIX exception_message.
         """
         return float(msg.get(6))
 
     def extract_ClOrdID(self, msg):
         """
-        Return ClOrdID, extracted from FIX message.
+        Return ClOrdID, extracted from FIX exception_message.
         """
         try:
             return int(msg.get(11).decode("cp1252"))
@@ -340,7 +340,7 @@ class FIXEngine(object):
     def extract_ext_ClOrdID(self, msg):
         """
         Return OrigClOrdID (used to identify the previous order in cancel
-        and cancel/replace requests), extracted from FIX message.
+        and cancel/replace requests), extracted from FIX exception_message.
         """
         try:
             return int(msg.get(41).decode("cp1252"))
@@ -349,31 +349,31 @@ class FIXEngine(object):
 
     def extract_leavesQty(self, msg):
         """
-        Return LeavesQty (Quantity open for further execution), extracted from FIX message.
+        Return LeavesQty (Quantity open for further execution), extracted from FIX exception_message.
         """
         return int(float(msg.get(151)))
 
     def extract_qty_fill(self, msg):
         """
-        Return LastQty (Quantity bought/sold on last fill), extracted from FIX message.
+        Return LastQty (Quantity bought/sold on last fill), extracted from FIX exception_message.
         """
         return int(float(msg.get(32)))
 
     def extract_price_fill(self, msg):
         """
-        Return LastPx, extracted from FIX message.
+        Return LastPx, extracted from FIX exception_message.
         """
         return float(msg.get(31))
 
     def extract_sec_numb(self, msg):
         """
-        Return MsgSeqNum, extracted from FIX message.
+        Return MsgSeqNum, extracted from FIX exception_message.
         """
         return int(msg.get(34))
 
     def extract_msg_type(self, msg):
         """
-        Return MsgType, extracted from FIX message.
+        Return MsgType, extracted from FIX exception_message.
         AD = TradeCaptureReportRequest
         y = SecurtityList
         9 = ERROR_order
@@ -413,7 +413,7 @@ class FIXEngine(object):
 
     def extract_market_changes(self, msg):
         """
-        Return bid_book and ask_book (max_depth=5) provided by server in FIX message.
+        Return bid_book and ask_book (max_depth=5) provided by server in FIX exception_message.
         """
         mqt_data_list = msg.encode().decode("cp1252").split('\x01269=')
         bid_book = []

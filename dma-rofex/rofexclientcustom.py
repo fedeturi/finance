@@ -6,7 +6,7 @@ Connection -------------------------------- Establish connection with server usi
     connected ----------------------------- True when connection is established, False otherwise.
     FIXEngine ---------------------------- Instance of FIXEngine to process FIX messages.
     host ---------------------------------- Destination host.
-    lst_50_msg_time ----------------------- Time that the last message has been sent.
+    lst_50_msg_time ----------------------- Time that the last exception_message has been sent.
     msg_send_to_sound --------------------- Quantity of messages sent.
     port ---------------------------------- Destination port.
     reconnected_needed -------------------- True if connection was lost and needs ro reconnect, False otherwise.
@@ -35,7 +35,7 @@ from global_queue import *
 
 filename = 'c:/logs/' + 'ROFEXclient-log' + \
            time.strftime('%Y-%m-%d_%H%M%S', time.localtime(time.time())) + '.log'
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(exception_message)s', filename=filename)
 
 
 def clear_screen():

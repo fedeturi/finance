@@ -76,11 +76,11 @@ def market_data_handler(message):
             order_sent += 1
 
         """    
-        print(message.get('instrumentId'))
-        instrument_df = pd.DataFrame(message)
-        bid_series = message.get('marketData').get('BI')
+        print(exception_message.get('instrumentId'))
+        instrument_df = pd.DataFrame(exception_message)
+        bid_series = exception_message.get('marketData').get('BI')
         bid_series = pd.DataFrame.from_dict(bid_series)
-        ask_series = message.get('marketData').get('OF')
+        ask_series = exception_message.get('marketData').get('OF')
         ask_series = pd.DataFrame.from_dict(ask_series)
         print(bid_series)
         print(ask_series)
