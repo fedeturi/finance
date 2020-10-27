@@ -21,15 +21,15 @@ class ROFEXClient:
     """
     def __init__(self, user, password, account, environment, verbose=3):
         """
-        Class Constructor
+        ROFEXClient Class Constructor
 
-        :param user: User.
+        :param user: User
         :type user: str
-        :param password: User Password.
+        :param password: User Password
         :type password: str
-        :param account: Account provided by Market Authority.
+        :param account: Account provided by Market Authority
         :type account: str
-        :param environment: Market environment.
+        :param environment: Market environment
         :type environment: str
         """
 
@@ -275,44 +275,6 @@ class ROFEXClient:
 
         try:
             pprint(message)
-            ticker = message.get('instrumentId').get('symbol')
-            ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
-            full_book = pyRofex.get_market_data(ticker, ticker_entries, depth=10)
-
-            if len(full_book.get('marketData').get('BI')) !=0\
-                    and len(full_book.get('marketData').get('OF')) != 0:
-                bid_book = full_book.get('marketData').get('BI')
-                bid_book_df = pd.DataFrame().from_dict(bid_book)
-                bid_book_df.columns = ['BP', 'BS']
-
-                ask_book = full_book.get('marketData').get('OF')
-                ask_book_df = pd.DataFrame().from_dict(ask_book)
-                ask_book_df.columns = ['OP', 'OS']
-
-                last_trade = [message.get('marketData').get('LA')]
-
-                full_book_df = pd.concat([bid_book_df, ask_book_df], axis=1)
-                full_book_df = full_book_df[['BS', 'BP', 'OP', 'OS']]
-                full_book_df.fillna(0, inplace=True)
-                self.lk.acquire()
-                print(dash_line)
-                msg_centered = f"   {ticker} - MarketData".ljust(width, ' ')
-                md_header = f"\033[0;30;47m{msg_centered}\033[1;37;40m"
-                print(md_header)
-                print("   BID         ASK")
-                print(full_book_df)
-                print("\nTop:", full_book_df['BS'].iloc[0], full_book_df['BP'].iloc[0],
-                      full_book_df['OP'].iloc[0], full_book_df['OS'].iloc[0])
-                self.lk.release()
-
-            else:
-                empty_MD = pd.DataFrame.from_dict({'BS': [0], 'BP': [0],  'OP': [0], 'OS': [0]})
-                self.lk.acquire()
-                print(dash_line)
-                print(f"----------- {ticker} - MarketData ".ljust(width, '-'))
-                print("   BID              ASK")
-                print(empty_MD)
-                self.lk.release()
 
         except Exception:
             traceback.print_exc()
@@ -493,9 +455,54 @@ class ROFEXClient:
             print(error_msg)
             print(dash_line)
 
-    def get_market_data(self):
-        # TODO implement
-        pass
+    def get_market_data(self, ticker):
+        """
+        Returns MarketData as a :class:`pandas.DataFrame` with full Book for specified ticker.
+
+        :param ticker: Ticker
+        :type ticker: str
+        :return: full_book
+        :rtype: :class:`pandas.DataFrame`
+        """
+
+        ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
+
+        try:
+            full_book = pyRofex.get_market_data(ticker, ticker_entries, depth=10)
+
+            bid_book = full_book.get('marketData').get('BI')
+            bid_book_df = pd.DataFrame().from_dict(bid_book)
+            bid_book_df.columns = ['BP', 'BS']
+
+            ask_book = full_book.get('marketData').get('OF')
+            ask_book_df = pd.DataFrame().from_dict(ask_book)
+            ask_book_df.columns = ['OP', 'OS']
+
+            last_trade = [message.get('marketData').get('LA')]
+
+            full_book_df = pd.concat([bid_book_df, ask_book_df], axis=1)
+            full_book_df = full_book_df[['BS', 'BP', 'OP', 'OS']]
+            full_book_df.fillna(0, inplace=True)
+
+            self.lk.acquire()
+            print(dash_line)
+            msg_centered = f"   {ticker} - MarketData".ljust(width, ' ')
+            md_header = f"\033[0;30;47m{msg_centered}\033[1;37;40m"
+            print(md_header)
+            print("   BID         ASK")
+            print(full_book_df)
+            print("\nTop:", full_book_df['BS'].iloc[0], full_book_df['BP'].iloc[0],
+                  full_book_df['OP'].iloc[0], full_book_df['OS'].iloc[0])
+            self.lk.release()
+
+        except Exception as e:
+            if logging.getLevelName('DEBUG') > 1:
+                logging.debug(f'ROFEXClient Get Market Data ERROR: En exception occurred {e}')
+
+            error_msg = "\033[0;30;47mERROR: Check log file " \
+                        "for detailed error message.\033[1;37;40m"
+            print(error_msg)
+            print(dash_line)
 
     def get_segments(self):
         # TODO implement
@@ -519,48 +526,56 @@ class ROFEXClient:
         pass
 
     def get_market_price(self, ticker, side):
-        # TODO implement
-        pass
+        """
+        Returns MarketPrice for specified Ticker and Side.
 
-        if side == "buy":
-            ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
-            full_book = pyRofex.get_market_data(ticker, ticker_entries)
-            market_price = float(full_book.get('marketData').get('OF')[0].get('price'))
+        :param ticker: Ticker.
+        :type ticker: str
+        :param side: Side.
+        :type side: str
+        :returns: MarketPrice.
+        :rtype: float
+        """
+
+        if side.lower() == "buy":
+            ticker_entries = [pyRofex.MarketDataEntry.OFFERS]
+            offer_book = pyRofex.get_market_data(ticker, ticker_entries)
+            market_price = float(offer_book.get('marketData').get('OF')[0].get('price'))
 
         else:
-            ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
-            full_book = pyRofex.get_market_data(ticker, ticker_entries)
-            market_price = float(full_book.get('marketData').get('BI')[0].get('price'))
+            ticker_entries = [pyRofex.MarketDataEntry.BIDS]
+            bid_book = pyRofex.get_market_data(ticker, ticker_entries)
+            market_price = float(bid_book.get('marketData').get('BI')[0].get('price'))
 
         return market_price
 
-    def get_quoting_price(self, price):
-        # TODO implement
-        quoting_price = price + 0.05
-        return quoting_price
-
     def get_market_qty(self, ticker, side):
-        # TODO implement
+        """
+        Returns MarketQty for specified Ticker and Side.
 
-        if side == "buy":
-            ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
-            full_book = pyRofex.get_market_data(ticker, ticker_entries)
-            market_qty = float(full_book.get('marketData').get('OF')[0].get('size'))
+        :param ticker: Ticker.
+        :type ticker: str
+        :param side: Side.
+        :type side: str
+        :returns: MarketQty.
+        :rtype: int
+        """
+
+        if side.lower() == "buy":
+            ticker_entries = [pyRofex.MarketDataEntry.OFFERS]
+            offer_book = pyRofex.get_market_data(ticker, ticker_entries)
+            market_qty = int(offer_book.get('marketData').get('OF')[0].get('size'))
 
         else:
-            ticker_entries = [pyRofex.MarketDataEntry.BIDS, pyRofex.MarketDataEntry.OFFERS]
-            full_book = pyRofex.get_market_data(ticker, ticker_entries)
-            market_qty = float(full_book.get('marketData').get('BI')[0].get('size'))
+            ticker_entries = [pyRofex.MarketDataEntry.BIDS]
+            bid_book = pyRofex.get_market_data(ticker, ticker_entries)
+            market_qty = int(bid_book.get('marketData').get('BI')[0].get('size'))
 
         return market_qty
 
-    def get_quoting_qty(self, qty):
-        # TODO implement
-        pass
-
     def build_market_order(self, ticker, side, qty):
         """
-        Builds order checking market price and qty and sends LIMIT order.
+        Builds and sends LIMIT order checking market price and qty.
 
         :param ticker: Ticker.
         :type ticker: str
@@ -572,17 +587,28 @@ class ROFEXClient:
         :rtype: int
         """
 
-        # TODO revisar antes de lanzar
-        leaves_qty = 0
-
-        if side == "sell":
+        if side.lower() == "sell":
             price = rofex_client.get_market_price(ticker, side)
-            mkt_qty = rofex_client.get_market_price(ticker, side)
+            mkt_qty = rofex_client.get_market_qty(ticker, side)
 
             if mkt_qty >= qty:
-                rofex_client.place_order(ticker, "sell", price, quantity)
+                rofex_client.place_order(ticker, "sell", price, qty)
+                leaves_qty = 0
+            else:
+                rofex_client.place_order(ticker, "sell", price, mkt_qty)
+                leaves_qty = qty - mkt_qty
         else:
-            rofex_client.place_order(ticker, "buy", price - 0.5, quantity)
+            price = rofex_client.get_market_price(ticker, side)
+            mkt_qty = rofex_client.get_market_qty(ticker, side)
+
+            if mkt_qty >= qty:
+                rofex_client.place_order(ticker, "buy", price, qty)
+                leaves_qty = 0
+            else:
+                rofex_client.place_order(ticker, "buy", price, mkt_qty)
+                leaves_qty = qty - mkt_qty
+
+        return leaves_qty
 
     # ==================================================================================================================
     #   End UTILITY FUNCTIONS definition
@@ -625,16 +651,11 @@ def build_header():
 
 if __name__ == '__main__':
     rofex_client = ROFEXClient("fedejbrun5018", "ugklxY0*", "REM5018", "DEMO")
-    rofex_client.subscribe_products([["GGALOct20"], ["GGALDic20"], ["GGALP 10/12 20"]])
+    rofex_client.subscribe_products([["GGALOct20"], ["GGALDic20"], ["DODic20"], ["DONov20"], ["DOOct20"]])
     rofex_client.subscribe_order_report()
 
-    time.sleep(4)
-    rofex_client.place_order("GGALOct20", "sell", 140, 1)
-    rofex_client.place_order("GGALDic20", "sell", 140, 1)
+    rofex_client.place_order("GGALOct20", "side", 150, 10)
 
-    time.sleep(4)
-    rofex_client.cancel_all_orders()
-    rofex_client.build_market_order()
 
     """
     price = rofex_client.get_market_price("GGALOct20")
