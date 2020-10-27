@@ -1,26 +1,19 @@
-from rofexclient import ROFEXClient
+from rofexclient import ROFEXClient, dash_line
 import time
-from pprint import pprint
-from threading import Lock
 
 if __name__ == '__main__':
-    lk = Lock()
 
     rofex_client = ROFEXClient("fedejbrun5018", "ugklxY0*", "REM5018", "DEMO")
     rofex_client.subscribe_products([["GGALOct20"], ["GGALDic20"], ["DODic20"], ["DONov20"], ["DOOct20"]])
     rofex_client.subscribe_order_report()
 
-    time.sleep(4)
-    rofex_client.place_order("GGALOct20", "buy", 60, 10)
-    rofex_client.place_order("GGALDic20", "buy", 60, 10)
+    time.sleep(2)
+    leaves_qty = rofex_client.build_market_order("GGALDic20", "sell", 10)
+    print(dash_line)
+    print(dash_line)
+    print("QUEDAN PENDIENTES", leaves_qty, "unidades por falta de liquidez ")
+    print(dash_line)
 
-    lk.acquire()
-    pprint(rofex_client.active_orders)
-    pprint(rofex_client.subscribed_products)
-    lk.release()
-
-    time.sleep(1)
-    rofex_client.cancel_all_orders()
 
     while True:
         try:

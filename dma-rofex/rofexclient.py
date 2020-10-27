@@ -610,12 +610,6 @@ class ROFEXClient:
 
         return leaves_qty
 
-    def get_active_orders(self):
-        return self.active_orders
-
-    def get_subscribed_products(self):
-        return self.subscribed_products
-
     # ==================================================================================================================
     #   End UTILITY FUNCTIONS definition
     # ==================================================================================================================
