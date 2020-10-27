@@ -654,8 +654,10 @@ if __name__ == '__main__':
     rofex_client.subscribe_products([["GGALOct20"], ["GGALDic20"], ["DODic20"], ["DONov20"], ["DOOct20"]])
     rofex_client.subscribe_order_report()
 
-    rofex_client.place_order("GGALOct20", "side", 150, 10)
-
+    try:
+        rofex_client.place_order("GGALOct20", "side", 150, 10)
+    except IncorrectOrderSide:
+        print("Pajero")
 
     """
     price = rofex_client.get_market_price("GGALOct20")
