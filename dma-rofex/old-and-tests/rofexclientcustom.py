@@ -28,7 +28,6 @@ from os import system, name
 
 import select
 import simplefix
-import winsound
 
 from fixengine import FIXEngine
 from global_queue import *

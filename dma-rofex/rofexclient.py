@@ -400,7 +400,7 @@ class ROFEXClient:
         while len(self.active_orders) > 0:
             try:
                 cancel_order_id = self.active_orders.pop().get('order').get('clientId')
-                rofex_client.cancel_order(cancel_order_id)
+                self.cancel_order(cancel_order_id)
 
             except Exception as e:
                 if logging.getLevelName('DEBUG') > 1:
@@ -479,8 +479,6 @@ class ROFEXClient:
             ask_book = full_book.get('marketData').get('OF')
             ask_book_df = pd.DataFrame().from_dict(ask_book)
             ask_book_df.columns = ['OP', 'OS']
-
-            last_trade = [message.get('marketData').get('LA')]
 
             full_book_df = pd.concat([bid_book_df, ask_book_df], axis=1)
             full_book_df = full_book_df[['BS', 'BP', 'OP', 'OS']]
@@ -590,27 +588,33 @@ class ROFEXClient:
         """
 
         if side.lower() == "sell":
-            price = rofex_client.get_market_price(ticker, side)
-            mkt_qty = rofex_client.get_market_qty(ticker, side)
+            price = self.get_market_price(ticker, side)
+            mkt_qty = self.get_market_qty(ticker, side)
 
             if mkt_qty >= qty:
-                rofex_client.place_order(ticker, "sell", price, qty)
+                self.place_order(ticker, "sell", price, qty)
                 leaves_qty = 0
             else:
-                rofex_client.place_order(ticker, "sell", price, mkt_qty)
+                self.place_order(ticker, "sell", price, mkt_qty)
                 leaves_qty = qty - mkt_qty
         else:
-            price = rofex_client.get_market_price(ticker, side)
-            mkt_qty = rofex_client.get_market_qty(ticker, side)
+            price = self.get_market_price(ticker, side)
+            mkt_qty = self.get_market_qty(ticker, side)
 
             if mkt_qty >= qty:
-                rofex_client.place_order(ticker, "buy", price, qty)
+                self.place_order(ticker, "buy", price, qty)
                 leaves_qty = 0
             else:
-                rofex_client.place_order(ticker, "buy", price, mkt_qty)
+                self.place_order(ticker, "buy", price, mkt_qty)
                 leaves_qty = qty - mkt_qty
 
         return leaves_qty
+
+    def get_active_orders(self):
+        return self.active_orders
+
+    def get_subscribed_products(self):
+        return self.subscribed_products
 
     # ==================================================================================================================
     #   End UTILITY FUNCTIONS definition
@@ -650,7 +654,7 @@ def build_header():
     # TODO
     pass
 
-
+'''
 if __name__ == '__main__':
     rofex_client = ROFEXClient("fedejbrun5018", "ugklxY0*", "REM5018", "DEMO")
     rofex_client.subscribe_products([["GGALOct20"], ["GGALDic20"], ["DODic20"], ["DONov20"], ["DOOct20"]])
@@ -669,7 +673,6 @@ if __name__ == '__main__':
     time.sleep(1)
     rofex_client.cancel_all_orders()
 
-    """
     price = rofex_client.get_market_price("GGALOct20")
     quoting_price = rofex_client.get_quoting_price(price)
     quantity = rofex_client.get_market_qty("GGALOct20")
@@ -701,3 +704,4 @@ if __name__ == '__main__':
                 pass
         except KeyboardInterrupt:
             rofex_client.disconnect()
+'''
