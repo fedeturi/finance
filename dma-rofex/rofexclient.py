@@ -305,6 +305,7 @@ class ROFEXClient:
         md_header = f"\033[0;30;47m{msg_centered}\033[1;37;40m"
         print(md_header)
         print(orderId, side, ticker, orderQty, price, status)
+        pprint(message)
         self.lk.release()
 
     def place_order(self, ticker, side, price, qty):
@@ -367,6 +368,7 @@ class ROFEXClient:
         try:
             cancel_order = pyRofex.cancel_order(ClOrdId)
 
+            """
             self.lk.acquire()
             print(dash_line)
             print(f"----------- Cancel Order Response: ".ljust(width, '-'))
@@ -378,7 +380,7 @@ class ROFEXClient:
             print(dash_line)
             print(f"----------- Cancel Order Status Response: ".ljust(width, '-'))
             pprint(order_status)
-            self.lk.release()
+            self.lk.release()"""
 
         except Exception as e:
             if logging.getLevelName('DEBUG') > 1:
@@ -654,10 +656,18 @@ if __name__ == '__main__':
     rofex_client.subscribe_products([["GGALOct20"], ["GGALDic20"], ["DODic20"], ["DONov20"], ["DOOct20"]])
     rofex_client.subscribe_order_report()
 
-    try:
-        rofex_client.place_order("GGALOct20", "side", 150, 10)
-    except IncorrectOrderSide:
-        print("Pajero")
+    time.sleep(4)
+    rofex_client.place_order("GGALOct20", "buy", 60, 10)
+    rofex_client.place_order("GGALDic20", "buy", 60, 10)
+    rofex_client.place_order("DODic20", "buy", 60, 10)
+    rofex_client.place_order("DONov20", "buy", 60, 10)
+    rofex_client.place_order("DOOct20", "buy", 60, 10)
+
+    pprint(rofex_client.active_orders)
+    pprint(rofex_client.subscribed_products)
+
+    time.sleep(1)
+    rofex_client.cancel_all_orders()
 
     """
     price = rofex_client.get_market_price("GGALOct20")
