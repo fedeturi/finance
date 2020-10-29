@@ -14,7 +14,6 @@ if __name__ == '__main__':
     print("QUEDAN PENDIENTES", leaves_qty, "unidades por falta de liquidez ")
     print(dash_line)
 
-
     while True:
         try:
             for _ in range(1):

@@ -1,14 +1,13 @@
+import datetime as dt
 import logging
+import os
 import sys
 import traceback
 from os import system, name
-import os
-import time
 from pprint import pprint
-import pandas as pd
 from threading import Lock
-import datetime as dt
 
+import pandas as pd
 import pyRofex
 
 width = os.get_terminal_size().columns
@@ -47,27 +46,9 @@ class ROFEXClient:
             'LIVE': pyRofex.Environment.LIVE,
         }
         self.env = environments.get(env_param)
-
-        # Create logging file
-        # TODO Implementar validacion para Windows/Linux
         self.session_time = dt.datetime.now()
-        filename = f'c:/logs/ROFEX{env_param}-{self.session_time.year}{self.session_time.month}' \
-                   f'{self.session_time.day}{self.session_time.hour}{self.session_time.minute}' \
-                   f'{self.session_time.second}.log'
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
 
-        # TODO No entiendo muy bien cual es la funcion de los AddLevelName
-
-        verbosity = verbose
-        if verbosity == '1':
-            logging.addLevelName('DEBUG', 10)
-        elif verbosity == '2':
-            logging.addLevelName('DEBUG', 20)
-        elif verbosity == '3':
-            logging.addLevelName('DEBUG', 30)
-        else:
-            logging.basicConfig(level=None, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
-            logging.addLevelName('DEBUG', 30)
+        create_log_file(self.session_time, env_param, verbose)
 
         try:
             self.connect(self.user, self.password, self.account, self.env)
@@ -644,58 +625,47 @@ def clear_screen():
         _ = system('clear')
 
 
-def build_header():
-    # TODO
-    pass
+def create_log_file(session_time, env_param, verbose):
+    """
+    Used to create log file.
+    Works in Windows and Unix systems
+    """
+    # for windows
+    if name == 'nt':
 
-'''
-if __name__ == '__main__':
-    rofex_client = ROFEXClient("fedejbrun5018", "ugklxY0*", "REM5018", "DEMO")
-    rofex_client.subscribe_products([["GGALOct20"], ["GGALDic20"], ["DODic20"], ["DONov20"], ["DOOct20"]])
-    rofex_client.subscribe_order_report()
+        filename = f'c:/logs/ROFEX{env_param}-{session_time.year}{session_time.month}' \
+                   f'{session_time.day}{session_time.hour}{session_time.minute}{session_time.second}.log'
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
 
-    time.sleep(4)
-    rofex_client.place_order("GGALOct20", "buy", 60, 10)
-    rofex_client.place_order("GGALDic20", "buy", 60, 10)
-    rofex_client.place_order("DODic20", "buy", 60, 10)
-    rofex_client.place_order("DONov20", "buy", 60, 10)
-    rofex_client.place_order("DOOct20", "buy", 60, 10)
+        # TODO No entiendo muy bien cual es la funcion de los AddLevelName
 
-    pprint(rofex_client.active_orders)
-    pprint(rofex_client.subscribed_products)
+        verbosity = verbose
+        if verbosity == '1':
+            logging.addLevelName('DEBUG', 10)
+        elif verbosity == '2':
+            logging.addLevelName('DEBUG', 20)
+        elif verbosity == '3':
+            logging.addLevelName('DEBUG', 30)
+        else:
+            logging.basicConfig(level=None, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+            logging.addLevelName('DEBUG', 30)
 
-    time.sleep(1)
-    rofex_client.cancel_all_orders()
+    # for mac and linux(here, os.name is 'posix')
+    else:
 
-    price = rofex_client.get_market_price("GGALOct20")
-    quoting_price = rofex_client.get_quoting_price(price)
-    quantity = rofex_client.get_market_qty("GGALOct20")
-    order = build_market_order("GGALOct20", "sell")
-    rofex_client.place_order("GGALOct20", "sell", price + 0.5, quantity)
+        filename = f'./logs/ROFEX{env_param}-{session_time.year}{session_time.month}' \
+                   f'{session_time.day}{session_time.hour}{session_time.minute}{session_time.second}.log'
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
 
-    price = rofex_client.get_market_price("GGALDic20")
-    quantity = rofex_client.get_market_qty("GGALDic20")
-    rofex_client.place_order("GGALOct20", "buy", price - 0.5, quantity)
+        # TODO No entiendo muy bien cual es la funcion de los AddLevelName
 
-    price = rofex_client.get_market_price("GGALOct20")
-    rofex_client.place_order("GGALOct20", "buy", price - 0.5, quantity)
-
-    rofex_client.get_all_order_status()
-
-    time.sleep(6)
-    lk.acquire()
-    print(dash_line)
-    print("CANCEL ORDERS")
-    lk.release()
-    for order in active_orders:
-        time.sleep(3)
-        cancel_orderId = order.get('order').get('clientId')
-        rofex_client.cancel_order(cancel_orderId)"""
-
-    while True:
-        try:
-            for _ in range(1):
-                pass
-        except KeyboardInterrupt:
-            rofex_client.disconnect()
-'''
+        verbosity = verbose
+        if verbosity == '1':
+            logging.addLevelName('DEBUG', 10)
+        elif verbosity == '2':
+            logging.addLevelName('DEBUG', 20)
+        elif verbosity == '3':
+            logging.addLevelName('DEBUG', 30)
+        else:
+            logging.basicConfig(level=None, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+            logging.addLevelName('DEBUG', 30)
