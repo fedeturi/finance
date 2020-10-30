@@ -631,41 +631,97 @@ def create_log_file(session_time, env_param, verbose):
     Works in Windows and Unix systems
     """
     # for windows
+
     if name == 'nt':
 
-        filename = f'c:/logs/ROFEX{env_param}-{session_time.year}{session_time.month}' \
-                   f'{session_time.day}{session_time.hour}{session_time.minute}{session_time.second}.log'
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+        try:
+            filename = f'c:/logs/ROFEX{env_param}-{session_time.year}{session_time.month}' \
+                       f'{session_time.day}{session_time.hour}{session_time.minute}{session_time.second}.log'
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+            # TODO No entiendo muy bien cual es la funcion de los AddLevelName
+            verbosity = verbose
+            if verbosity == '1':
+                logging.addLevelName('DEBUG', 10)
+            elif verbosity == '2':
+                logging.addLevelName('DEBUG', 20)
+            elif verbosity == '3':
+                logging.addLevelName('DEBUG', 30)
+            else:
+                logging.basicConfig(level=None, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+                logging.addLevelName('DEBUG', 30)
 
-        # TODO No entiendo muy bien cual es la funcion de los AddLevelName
+        except FileNotFoundError:
 
-        verbosity = verbose
-        if verbosity == '1':
-            logging.addLevelName('DEBUG', 10)
-        elif verbosity == '2':
-            logging.addLevelName('DEBUG', 20)
-        elif verbosity == '3':
-            logging.addLevelName('DEBUG', 30)
-        else:
-            logging.basicConfig(level=None, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
-            logging.addLevelName('DEBUG', 30)
+            print("Creating log directory")
+            path = "c:/logs"
+            try:
+                os.mkdir(path)
+            except OSError:
+                print("Creation of the directory %s failed" % path)
+            else:
+                print("Successfully created the directory %s" % path)
+
+
+            filename = f'c:/logs/ROFEX{env_param}-{session_time.year}{session_time.month}' \
+                       f'{session_time.day}{session_time.hour}{session_time.minute}{session_time.second}.log'
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+            # TODO No entiendo muy bien cual es la funcion de los AddLevelName
+            verbosity = verbose
+            if verbosity == '1':
+                logging.addLevelName('DEBUG', 10)
+            elif verbosity == '2':
+                logging.addLevelName('DEBUG', 20)
+            elif verbosity == '3':
+                logging.addLevelName('DEBUG', 30)
+            else:
+                logging.basicConfig(level=None, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+                logging.addLevelName('DEBUG', 30)
 
     # for mac and linux(here, os.name is 'posix')
     else:
+        try:
+            filename = f'./logs/ROFEX{env_param}-{session_time.year}{session_time.month}' \
+                       f'{session_time.day}{session_time.hour}{session_time.minute}{session_time.second}.log'
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
 
-        filename = f'./logs/ROFEX{env_param}-{session_time.year}{session_time.month}' \
-                   f'{session_time.day}{session_time.hour}{session_time.minute}{session_time.second}.log'
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+            # TODO No entiendo muy bien cual es la funcion de los AddLevelName
 
-        # TODO No entiendo muy bien cual es la funcion de los AddLevelName
+            verbosity = verbose
+            if verbosity == '1':
+                logging.addLevelName('DEBUG', 10)
+            elif verbosity == '2':
+                logging.addLevelName('DEBUG', 20)
+            elif verbosity == '3':
+                logging.addLevelName('DEBUG', 30)
+            else:
+                logging.basicConfig(level=None, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+                logging.addLevelName('DEBUG', 30)
 
-        verbosity = verbose
-        if verbosity == '1':
-            logging.addLevelName('DEBUG', 10)
-        elif verbosity == '2':
-            logging.addLevelName('DEBUG', 20)
-        elif verbosity == '3':
-            logging.addLevelName('DEBUG', 30)
-        else:
-            logging.basicConfig(level=None, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
-            logging.addLevelName('DEBUG', 30)
+        except FileNotFoundError:
+
+            print("Creating log directory")
+            path = "./logs"
+            try:
+                os.mkdir(path)
+            except OSError:
+                print("Creation of the directory %s failed" % path)
+            else:
+                print("Successfully created the directory %s" % path)
+
+
+            filename = f'./logs/ROFEX{env_param}-{session_time.year}{session_time.month}' \
+                       f'{session_time.day}{session_time.hour}{session_time.minute}{session_time.second}.log'
+            logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+
+            # TODO No entiendo muy bien cual es la funcion de los AddLevelName
+
+            verbosity = verbose
+            if verbosity == '1':
+                logging.addLevelName('DEBUG', 10)
+            elif verbosity == '2':
+                logging.addLevelName('DEBUG', 20)
+            elif verbosity == '3':
+                logging.addLevelName('DEBUG', 30)
+            else:
+                logging.basicConfig(level=None, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
+                logging.addLevelName('DEBUG', 30)
