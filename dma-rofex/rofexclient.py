@@ -5,7 +5,7 @@ import sys
 import traceback
 from os import system, name
 from pprint import pprint
-from threading import Lock
+from threading import Lock, Thread
 
 import pandas as pd
 import pyRofex
@@ -14,7 +14,7 @@ width = os.get_terminal_size().columns
 dash_line = "-" * width
 
 
-class ROFEXClient:
+class ROFEXClient(Thread):
     """Implements Client to connect to ROFEX DMA server.
     (demo = reMarkets; live = ROFEX)
     """
@@ -32,6 +32,7 @@ class ROFEXClient:
         :type environment: str
         """
 
+        Thread.__init__(self)
         self.subscribed_products = []
         self.user = user
         self.password = password
@@ -50,10 +51,19 @@ class ROFEXClient:
 
         create_log_file(self.session_time, env_param, verbose)
 
+        self.shutdown = False  # Flag that triggers disconnection
+
         try:
             self.connect(self.user, self.password, self.account, self.env)
-        except KeyboardInterrupt:
-            self.disconnect()
+        except (ConnectionAbortedError, ConnectionError, ConnectionRefusedError, ConnectionResetError) as e:
+
+            if logging.getLevelName('DEBUG') > 1:
+                logging.debug(f'ROFEXClient Connection ERROR: En exception occurred {e}')
+
+            error_msg = "\033[0;30;47mERROR: CONNECTION ERROR. Check log file " \
+                        "for detailed error message.\033[1;37;40m"
+            print(error_msg)
+            print(dash_line)
 
     # ==================================================================================================================
     #   Start HANDLERS definition
@@ -127,6 +137,15 @@ class ROFEXClient:
     #   Start UTILITY FUNCTIONS definition
     # ==================================================================================================================
 
+    def run(self):
+        """
+        Implements Thread run() function
+        """
+        while not self.shutdown:
+            pass
+        else:
+            self.disconnect()
+
     def connect(self, user, password, account, environment):
         """
         Implements Connection to ROFEX DMA Server.
@@ -158,7 +177,7 @@ class ROFEXClient:
                                account=account,
                                environment=environment)
 
-            # Initialize WebSocket Cnnection with Handlers
+            # Initialize WebSocket Connection with Handlers
 
             pyRofex.init_websocket_connection(market_data_handler=self.market_data_handler,
                                               error_handler=self.error_handler,
@@ -189,13 +208,15 @@ class ROFEXClient:
         pyRofex.close_websocket_connection()
         sys.exit(0)
 
-    def subscribe_products(self, args):
+    def subscribe_products(self, args, depth=1):
         """
         Subscribes to MarketData for specified product/s.
         (Each given Ticker HAS to be a str inside a one element list).
 
         :param args: List of tickers to subscribe to MarketData.
         :type args: list of list
+        :param depth: Depth of order to receive in each MarketData message.
+        :type depth: int
         """
 
         entries = [pyRofex.MarketDataEntry.BIDS,
@@ -206,13 +227,14 @@ class ROFEXClient:
                 self.subscribed_products.append(instrument)
 
                 if logging.getLevelName('DEBUG') > 1:
-                    logging.debug(f'ROFEXClient: Subscribing to {instrument} MarketData')
+                    logging.debug(f'ROFEXClient: Subscribing to {instrument} MarketData with {depth} entries')
 
-                message = f'Subscribing to {instrument[0]} MarketData'
+                message = f'Subscribing to {instrument[0]} MarketData with {depth} entries'
                 print(message)
 
                 pyRofex.market_data_subscription(tickers=instrument,
-                                                 entries=entries)
+                                                 entries=entries,
+                                                 depth=depth)
         except Exception as e:
 
             if logging.getLevelName('DEBUG') > 1:
