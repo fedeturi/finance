@@ -520,13 +520,14 @@ class ROFEXClient(Thread):
         # TODO implement
         pass
 
-    def get_instrument_details(self):
-        # TODO implement
-        pass
+    def get_instrument_details(self, ticker):
+        return pyRofex.get_instrument_details(ticker)
 
-    def get_trade_history(self):
-        # TODO implement
-        pass
+    start_date = dt.date(2020, 1, 1)
+    end_date = dt.date.today()
+
+    def get_trade_history(self, ticker, start=start_date, end=end_date):
+        return pyRofex.get_trade_history(ticker, start, end)
 
     def get_market_price(self, ticker, side):
         """
