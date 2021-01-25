@@ -6,12 +6,13 @@ import traceback
 from os import system, name
 from pprint import pprint
 from threading import Lock
-
+import json
+import numpy
 import pandas as pd
 import pyRofex
 
-width = os.get_terminal_size().columns
-dash_line = "-" * width
+from pyRofex.components.exceptions import ApiException
+from global_queue import all_markets_description_rofex, dash_line, width
 
 
 class ROFEXClient:
@@ -50,10 +51,30 @@ class ROFEXClient:
 
         create_log_file(self.session_time, env_param, verbose)
 
-        try:
-            self.connect(self.user, self.password, self.account, self.env)
-        except KeyboardInterrupt:
-            self.disconnect()
+        # Market Id
+        self.market_id = "ROFEX"
+
+        # All subscribed and quoting AS ALGOS
+        self.algos_subscribed = []
+
+        global all_markets_description_rofex
+        self.all_markets_description = all_markets_description_rofex
+        self.subscribed_markets = {}
+
+        # Available products
+        self.products = []
+
+        # Session orders
+        self.quoting_orders = []
+        self.non_quoting_orders = []
+
+        self.connected = False
+
+        # This check is used because API sends 2 messages when cancelling orders,
+        # where 1st ClOrdID parameter is invalid
+        self.cancel_two = 0
+
+        self.connect(self.user, self.password, self.account, self.env)
 
     # ==================================================================================================================
     #   Start HANDLERS definition
@@ -143,13 +164,13 @@ class ROFEXClient:
             :type environment: str
         """
 
-        clear_screen()
-        print(dash_line)
-        message = f'Connecting to {environment} DMA server'
-        print(message.center(width))
-        print(dash_line)
+        print(dash_line, end='')
+        message = f'Connecting to {self.market_id} {self.env} DMA server'
+        print(message.center(width), end='')
+        print(dash_line, end='')
 
-        logging.debug(f'ROFEXClient: Starting connection to {environment} DMA Server ')
+        logging.debug(f'Starting connection to {self.market_id} {self.env} DMA Server ')
+
         try:
             # Initialize Environment
             pyRofex.initialize(user=user,
@@ -157,21 +178,50 @@ class ROFEXClient:
                                account=account,
                                environment=environment)
 
-            # Initialize WebSocket Cnnection with Handlers
+            # Initialize WebSocket Connection with Handlers
 
             pyRofex.init_websocket_connection(market_data_handler=self.market_data_handler,
+                                              order_report_handler=self.order_report_handler,
                                               error_handler=self.error_handler,
-                                              exception_handler=self.exception_handler,
-                                              order_report_handler=self.order_report_handler)
+                                              exception_handler=self.exception_handler)
+
+            print('Connection Status: OK'.center(width))
+            print('Ready to Launch Strategies in ROFEX'.center(width))
+            print(dash_line)
+
+            # Available products
+            self.products = self.get_all_instruments()
+            self.get_detailed_instruments()
+
+            with open('condition_required_BYMA-ROFEX.json', 'r') as reader:
+                strategies_dict = json.load(reader)
+
+            pre_trade_market_data_list = [element.split('-')[0] for element in strategies_dict.keys()]
+            subscribe_list = [[element] for element in numpy.unique(pre_trade_market_data_list)]
+            self.subscribe_products(subscribe_list, depth=10)
+            self.subscribe_order_report()
+
+            self.connected = True
+
+        except ApiException as e:
+            logging.debug(f'Connection ERROR: Incorrect Credentials {e}')
+
+            error_msg = "\033[0;30;47mERROR: Incorrect Credentials. Check log file " \
+                        "for detailed error message.\033[1;37;40m"
+            print(error_msg)
+            print(dash_line)
+
+            sys.exit(0)
 
         except Exception as e:
-            if logging.getLevelName('DEBUG') > 1:
-                logging.debug(f'ROFEXClient Connection ERROR: En exception occurred {e}')
+            logging.debug(f'Connection ERROR: En exception occurred {e}')
 
             error_msg = "\033[0;30;47mERROR: CONNECTION ERROR. Check log file " \
                         "for detailed error message.\033[1;37;40m"
             print(error_msg)
             print(dash_line)
+
+            sys.exit(0)
 
     def disconnect(self):
         """
@@ -504,17 +554,23 @@ class ROFEXClient:
         pass
 
     def get_all_instruments(self):
-        # TODO implement and add pydoc and try except
-        instruments_list = pyRofex.get_all_instruments()
-        return instruments_list
+        """
+        Get all available products in ROFEX.
+        :return : instruments_list
+        :rtype : dict
+        """
+        inst_list = pyRofex.get_all_instruments()
+
+        inst_list_keys = [symbol.get('instrumentId').get('symbol') for symbol in inst_list.get('instruments')]
+
+        return inst_list_keys
 
     def get_detailed_instruments(self):
         # TODO implement
         pass
 
-    def get_instrument_details(self):
-        # TODO implement
-        pass
+    def get_instrument_details(self, ticker):
+        return pyRofex.get_instrument_details(ticker)
 
     def get_trade_history(self):
         # TODO implement

@@ -1,0 +1,1138 @@
+{
+  "MERV - XMEV - TXAR - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "RFX20Mar21 80000c": {
+    "min_tick": 1.0,
+    "notional": 1.0
+  },
+  "OROP 01/03 21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "USD BROU CAJA": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "DODic21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - GFGC111.0OC - 24hs": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "TRI.SJO.PDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "SOJ.ROSMay21 262p": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "DOP 04/05 21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "DONov21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - PESOS - 3D": {
+    "min_tick": 0.001,
+    "notional": 0.01
+  },
+  "DOAgo21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "SOY.CMEOct21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "TRI.PLR.PDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - AY24X - 48hs": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "RFX20Mar21 72000p": {
+    "min_tick": 1.0,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AY24D - 48hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - CEPU - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - DICY - CI": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "MERV - XMEV - PBR - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "SOJ.ROS 05/11 21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - YPFD - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "USD BROU BROU": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - PAMP - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "SOJ.ROSMay21M": {
+    "min_tick": 0.1,
+    "notional": 10.0
+  },
+  "MERV - XMEV - AMZN - 24hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - A2E2C - 48hs": {
+    "min_tick": 0.01,
+    "notional": 1000.0
+  },
+  "MERV - XMEV - CVH - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "WTIP 01/03 21": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "SOJ.ROSMay21 262c": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "TRI.BA.PDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - MIRG - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "GGALFeb21": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "ZOP 01/02 19": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "CNHFeb21M": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - DOLAR - 14D": {
+    "min_tick": 0.001,
+    "notional": 0.01
+  },
+  "MERV - XMEV - TGNO4 - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MAI.ROSJul21": {
+    "min_tick": 1e-06,
+    "notional": 0.1
+  },
+  "USD BROU/CAJA": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "RFX20Mar21": {
+    "min_tick": 5.0,
+    "notional": 1.0
+  },
+  "MERV - XMEV - PBR - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "SOJ.ROS 05/06 21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "DOOct21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "ARS CAJA CAJA": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - TECO2 - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "DOP 02/03 21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "I.BTC MTR": {
+    "min_tick": 0.0,
+    "notional": 1.0
+  },
+  "USD CAJA CAJA": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "SEF.ROSDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - PAMP - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "SOY.CMEAbr21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "RFX20/MAR21/78000/C": {
+    "min_tick": 1.0,
+    "notional": 1.0
+  },
+  "DOMar21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - PESOS - 30D": {
+    "min_tick": 0.001,
+    "notional": 0.01
+  },
+  "MERV - XMEV - DICAD - 24hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "SOJ.ROSDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - APBRA - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - DICAC - 48hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - BBAR - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "TRI.BADispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - AMZN - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "OROEne21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "SOJ.ROSFeb21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - BMA - 24hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "CNHEne21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "ARS BROU CAJA": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "USD CAJA BROU": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MAI.ROSJul21M": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - BBD - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "YPFDFeb21": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - DOLAR - 28D": {
+    "min_tick": 0.001,
+    "notional": 0.01
+  },
+  "DOP 01/04 21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "SOJ.QQDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - ALUA - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "EUR CAJA BROU": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "TRI.ROSDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "EUR FBCU FBCU": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "UYU BROU/CAJA": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AO20C - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "CNHEne21M": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "SOJ.ROS 07/11 21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - YPFD - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "TRI.ROS 01/03 21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - GFGV13081D - 24hs": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - TECO2 - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - CEPU - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AC17 - 24hs": {
+    "min_tick": 0.5,
+    "notional": 1000.0
+  },
+  "MERV - XMEV - PESOS - 7D": {
+    "min_tick": 0.001,
+    "notional": 0.01
+  },
+  "MERV - XMEV - DICA - 24hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "GGALAbr21": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "TRI.ROSJul21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - DICY - 24hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AL29C - 48hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "EUR CAJA CAJA": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - SUPV - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - VALO - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - APBRA - 24hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "TRI.SDI.PDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "DOMay21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - TGNO4 - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - TXAR - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEVCONT - AY24D - 48hs": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "RFXP 03/04 21": {
+    "min_tick": 5.0,
+    "notional": 1.0
+  },
+  "MERV - XMEV - BMA - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - LOMA - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - GGAL - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - VALO - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - DICAC - CI": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "ZVZZTV2.0": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MAI.ROSAbr21": {
+    "min_tick": 1e-06,
+    "notional": 0.1
+  },
+  "MERV - XMEV - AMZN - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "PISO.SOJ.ROSMay21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "MAI.ROSAbr21M": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - GFGC13081D - 24hs": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "BRL CAJA CAJA": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "RFX20Mar21 68000p": {
+    "min_tick": 1.0,
+    "notional": 1.0
+  },
+  "MERV - XMEV - BYMA - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "RFX20Mar21 78000c": {
+    "min_tick": 1.0,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AA46 - CI": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "MERV - XMEV - SUPV - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MAI.ROS 04/07 21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - DICA - 48hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "MERV - XMEV - BMA - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "RFX20Mar21 74000c": {
+    "min_tick": 1.0,
+    "notional": 1.0
+  },
+  "MERV - XMEV - DICY - 48hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "SOJ.ROS 05/07 21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MAI.ROS.PDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - BYMA - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AA37 - CI": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "DOFeb21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - DICAD - CI": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "CRN.CMEAbr21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "MERV - XMEV - BYMA - 24hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - GGAL - 24hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "RFX20Mar21 74000p": {
+    "min_tick": 1.0,
+    "notional": 1.0
+  },
+  "DOP 03/04 21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - TRAN - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - GD41 - 48hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "MERV - XMEV - DOMAR21 - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "DONov21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - TGSU2 - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "WTIEne21": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "DOP 01/05 21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "SOJ.ROSMay22": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "DOP 01/02 21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - DOLAR - 7D": {
+    "min_tick": 0.001,
+    "notional": 0.01
+  },
+  "SEF.ROSMay21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "EURUSD": {
+    "min_tick": 1e-05,
+    "notional": 1.0
+  },
+  "SOJ.SOY 05/06 21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - AA46 - 24hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "TRI.LCS.PDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "DOJun21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - ALUA - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "TRI.ROSMar21": {
+    "min_tick": 1e-06,
+    "notional": 0.1
+  },
+  "USD BROU BROUA": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - APBRA - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - COME - 24hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AA37 - 48hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "MERV - XMEV - TRAN - 48hs": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "RFX20Mar21 70000p": {
+    "min_tick": 1.0,
+    "notional": 1.0
+  },
+  "DOJul21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "TRI.BAEne21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - DONOV20 - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "DOP 02/03 21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AO20 - 48hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AL30C - 48hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "SOJ.ROSJul21": {
+    "min_tick": 1e-06,
+    "notional": 0.1
+  },
+  "DOSep21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "SOJ.ROSMay21": {
+    "min_tick": 1e-06,
+    "notional": 0.1
+  },
+  "MERV - XMEV - DOENE21 - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "TRI.ROS.PDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "PISO.TRI.ROSMar21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "MERV - XMEV - A2E2 - CI": {
+    "min_tick": 0.5,
+    "notional": 1000.0
+  },
+  "DOEne21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "SOY.CMEJun21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "DOAgo21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AC17 - 48hs": {
+    "min_tick": 0.5,
+    "notional": 1000.0
+  },
+  "SOJ.ROS.PDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "DOAbr21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AA46 - 48hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AA37 - 24hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "MERV - XMEV - COME - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AL30 - 48hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "SOJ.ROS 01/07 21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "BITCOIN": {
+    "min_tick": 1.0,
+    "notional": 0.001
+  },
+  "MERV - XMEV - DODIC20 - 48hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - CEPU - 24hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "SOJ.ROSSep21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "TRI.ADA.PDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - CRES - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MAI.ROSDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - YPFD - 24hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "DOP 01/02 21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AY24 - 48hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "DOSep21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AY24C - 48hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "SOJ.ROSEne22": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "SOJ.ROSEne21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "DOMay21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AA26 - CI": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "TRI.LHS.PDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "RFX20/MAR21 78000 C": {
+    "min_tick": 1.0,
+    "notional": 1.0
+  },
+  "USD FBCU FBCU": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "TRI.ROS/ENE/MAR/21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "GGALP 02/04 21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - CVH - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "CNHFeb21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AY24D - CI": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "WTIMay21": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - GFGV11281D - 24hs": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "BTCEUR": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "DOP 03/04 21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AL29 - 48hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "MERV - XMEV - GFGV10081D - 24hs": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "SOJ.MINJul21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "MERV - XMEV - CRES - 24hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - GGAL - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - GD41D - 48hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AO20D - 48hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - BBD - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "SOJ.ROS 01/05 21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - AA26 - 24hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "OROMar21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "SOJ.ROSJul21M": {
+    "min_tick": 0.1,
+    "notional": 10.0
+  },
+  "DOP 05/06 21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AC17 - CI": {
+    "min_tick": 0.5,
+    "notional": 1000.0
+  },
+  "TRI.ROS/ENE/MAR 21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - MIRG - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - DICAC - 24hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "DOJun21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "SOJ.ROSAbr21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "UYU FBCU/BROU": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MAI.ROSDic21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - DICAD - 48hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "SOJ.ROSNov21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "PAMPFeb21": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "WTIMar21": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "TRI.MINMar21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "EUR BROU BROU": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "DOOct21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - BBD - 24hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - A2E2 - 48hs": {
+    "min_tick": 0.5,
+    "notional": 1000.0
+  },
+  "MERV - XMEV - GFGC11281D - 24hs": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - EDN - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "BTCUSD": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - TGSU2 - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "ZVZZTC2.0": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "RFX20Mar21 76000c": {
+    "min_tick": 1.0,
+    "notional": 1.0
+  },
+  "MERV - XMEV - LOMA - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "OROMay21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "TRI.ODR.PDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "TRI.LPA.PDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "SOJ.ROS 03/05 21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "DOFeb21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "DOJul21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "USD FBCU/BROU": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - GFGC10081D - 24hs": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AA26 - 48hs": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "MERV - XMEV - GFGV102.0OC - 24hs": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "RFX20Jun21": {
+    "min_tick": 5.0,
+    "notional": 1.0
+  },
+  "DODic21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "SOYP 04/06 21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "SOJ.ROS/MAY21M": {
+    "min_tick": 0.1,
+    "notional": 10.0
+  },
+  "BRL BROU CAJA": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "CRN.CMEFeb21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "MERV - XMEV - COME - CI": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - BBAR - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - AL29D - 48hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - PBR - 24hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "DOP 06/07 21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "DOP 01/03 21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "DOAbr21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "DOMar21A": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "I.RFX20": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "SOJ.ROSMar21": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  },
+  "MERV - XMEV - AL30D - 48hs": {
+    "min_tick": 0.01,
+    "notional": 1.0
+  },
+  "MERV - XMEV - DICA - CI": {
+    "min_tick": 0.5,
+    "notional": 1.0
+  },
+  "SOJ.MINMay21": {
+    "min_tick": 0.1,
+    "notional": 1.0
+  },
+  "MERV - XMEV - CRES - 48hs": {
+    "min_tick": 0.05,
+    "notional": 1.0
+  },
+  "MERV - XMEV - GFGC102.0OC - 24hs": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "DOEne21": {
+    "min_tick": 0.001,
+    "notional": 1.0
+  },
+  "RFX20Abr21": {
+    "min_tick": 5.0,
+    "notional": 1.0
+  },
+  "MERV - XMEV - A2E2 - 24hs": {
+    "min_tick": 0.5,
+    "notional": 1000.0
+  },
+  "TRI.BCO.PDispo": {
+    "min_tick": 0.1,
+    "notional": 0.1
+  }
+}
