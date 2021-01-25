@@ -1,13 +1,15 @@
 from rofexclient import ROFEXClient
+from pprint import  pprint
+import pandas as pd
+import pyRofex
+import datetime as dt
 
 if __name__ == '__main__':
 
     rofex_client = ROFEXClient("fedejbrun5018", "ugklxY0*", "REM5018", "DEMO")
     rofex_client.daemon = True
     rofex_client.start()
-    rofex_client.subscribe_products([["GGALOct20"], ["DOEne21"]])
-    rofex_client.subscribe_products([["GGALDic20"], ["DODic20"]], 10)
-    rofex_client.subscribe_order_report()
+    pprint(rofex_client.get_instrument_details("MAI.ROSDic20"))
 
     while True:
         try:
