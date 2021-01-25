@@ -36,8 +36,8 @@ if __name__ == '__main__':
     pprint(order)
 
     time.sleep(3)
-    cancelled_clordid = rofex_client.cancel_order(clordid)
 
+    cancelled_clordid = rofex_client.cancel_order(clordid+80)
 
     while True:
         try:

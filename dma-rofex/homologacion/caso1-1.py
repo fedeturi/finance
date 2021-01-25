@@ -1,20 +1,19 @@
 """
-Caso 2: LOGIN INTENTO FALLIDO
+Caso 1-1: LOGIN INTENTO EXITOSO
 
 DESCRIPCION
-Se pedirá al cliente conectarse a la API utilizando
-credenciales incorrectas
+Se pedirá al cliente conectarse a la API utilizando un
+user y password correcto
 
 RESULTADO ESPERADO
-Procesa correctamente el mensaje de
-error
+Ingresa correctamente a la plataforma
 """
 
 from rofexclient import ROFEXClient
 
 if __name__ == '__main__':
 
-    rofex_client = ROFEXClient("fedeun5018", "ugklxY0*", "REM5018", "DEMO")
+    rofex_client = ROFEXClient("fedejbrun5018", "ugklxY0*", "REM5018", "DEMO")
 
     while True:
         try:

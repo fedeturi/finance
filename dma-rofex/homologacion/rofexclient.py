@@ -13,6 +13,7 @@ import pyRofex
 
 from pyRofex.components.exceptions import ApiException
 from global_queue import all_markets_description_rofex, dash_line, width
+from orderrofex import OrderRofex
 
 
 class ROFEXClient:
@@ -76,6 +77,8 @@ class ROFEXClient:
 
         self.connect(self.user, self.password, self.account, self.env)
 
+        self.cancel_two = 0
+
     # ==================================================================================================================
     #   Start HANDLERS definition
     # ==================================================================================================================
@@ -90,8 +93,7 @@ class ROFEXClient:
             self.process_market_data_message(md_message)
 
         except Exception as e:
-            if logging.getLevelName('DEBUG') > 1:
-                logging.debug(f'ROFEXClient MDHandler Exception: {e.message}')
+            logging.debug(f'ROFEXClient MDHandler Exception: {e.message}')
 
     def order_report_handler(self, or_message):
         """
@@ -333,40 +335,71 @@ class ROFEXClient:
         :param message: Message received. Comes as a JSON.
         :type message: dict
         """
-        # TODO Later this should evaluate every possible action triggerd by specific MarketData messages
-        orderId = message.get('orderReport').get('orderId')
-        side = message.get('orderReport').get('side')
+        side = message.get('orderReport').get('side').lower()
         ticker = message.get('orderReport').get('instrumentId').get('symbol')
-        orderQty = message.get('orderReport').get('orderQty')
-        price = message.get('orderReport').get('price')
+        order_qty = int(message.get('orderReport').get('orderQty'))
+        cum_qty = int(message.get('orderReport').get('cumQty'))
+        last_qty = int(message.get('orderReport').get('lastQty'))
+        leaves_qty = int(message.get('orderReport').get('leavesQty'))
+        avg_px = float(message.get('orderReport').get('avgPx'))
+        price = float(message.get('orderReport').get('price'))
         status = message.get('orderReport').get('status')
+        clordid = int(message.get('orderReport').get('clOrdId'))
 
-        if logging.getLevelName('DEBUG') > 1:
-            logging.debug(f'ROFEXClient: Received {str(status)} order.')
+        logging.debug('process_order_report_message')
+        logging.debug(f'Received {str(status)} order ClOrdId {clordid} | {side} {ticker} {price} {order_qty}.')
 
-        self.lk.acquire()
-        print(dash_line)
-        msg_centered = f"   {ticker} - {status} Order".ljust(width, ' ')
-        md_header = f"\033[0;30;47m{msg_centered}\033[1;37;40m"
-        print(md_header)
-        print(orderId, side, ticker, orderQty, price, status)
-        pprint(message)
-        self.lk.release()
+        if status == 'CANCELLED':
 
-    def place_order(self, ticker, side, price, qty):
+            logging.debug(f'Order CANCELLED')
+            self.cancel_two += 1
+
+            # First CANCELLED message received
+            if self.cancel_two == 1:
+                clordid = 0
+
+            # Second CANCELLED message received
+            elif self.cancel_two == 2:
+                pass
+
+            else:
+                self.cancel_two *= 0
+
+        elif status == 'PENDING_NEW':
+            logging.debug(f'Order PENDING')
+
+        elif status == 'NEW':
+            logging.debug('Order ACCEPTED')
+
+        elif status == 'FILLED' or status == 'PARTIALLY_FILLED':
+            logging.debug(f'Order {status} | ClOrdId {clordid} : {side} {ticker} {avg_px} {last_qty}.')
+            # TODO Revisar los autofills que hace process_fill() de as_k_engine
+
+            print(dash_line)
+            msg_centered = f"   {ticker} - {status} Order".ljust(width, ' ')
+            md_header = f"\033[0;30;47m{msg_centered}\033[1;37;40m"
+            print(md_header)
+            print(clordid, side, ticker, order_qty, price, status)
+
+    def place_order(self, event, replace=False):
         """
         Sends LIMIT order request to server and stores response in active_orders list.
 
-        :param ticker: Product ticker.
-        :type ticker: str
-        :param side: Side for order.
-        :type side: str
-        :param price: Price for order.
-        :type price: float
-        :param qty: Quantity for order.
-        :type qty: int
+        :param event: Event with parameters for Order.
+        :type event: PlaceOrderEventROFEX
+        :returns: ClOrdID
+        :rtype: int
         """
-        # TODO Atento al parametro cancel_previous
+
+        if replace:
+            logging.debug('place_order_CHANGE_')
+        else:
+            logging.debug('place_order')
+
+        ticker = event.get('symbol')
+        side = event.get('side')
+        price = float(event.get('price'))
+        qty = int(event.get('qty'))
 
         if side.lower() == 'buy':
             side = pyRofex.Side.BUY
@@ -375,27 +408,39 @@ class ROFEXClient:
         else:
             raise IncorrectOrderSide
 
-        if logging.getLevelName('DEBUG') > 1:
-            logging.debug(f'ROFEXClient: Sending {str(side).split(".")[-1]} order.')
+        logging.debug(f'Sending {str(side).split(".")[-1]} order.')
 
         try:
+
             order = pyRofex.send_order(ticker=ticker,
                                        side=side,
                                        size=qty,
                                        price=price,
-                                       order_type=pyRofex.OrderType.LIMIT)
-            self.lk.acquire()
-            # TODO append solamente si status es OK
-            self.active_orders.append(order)
-            self.lk.release()
+                                       order_type=pyRofex.OrderType.LIMIT,
+                                       cancel_previous=replace)
+
+            if order.get('status') == 'OK':
+                client_order_id = int(order.get('order').get('clientId'))
+            else:
+                client_order_id = 0
+
+            side_str = 'sell' if side == pyRofex.Side.SELL else 'buy'
+
+            rofex_order = OrderRofex(ticker, qty, side_str, price)
+            rofex_order.place(client_order_id)
+
+            return client_order_id, rofex_order
 
         except Exception as e:
-            if logging.getLevelName('DEBUG') > 1:
-                logging.debug(f'ROFEXClient ERROR: En exception occurred {e}')
+            logging.debug(f'ERROR: En exception occurred {e}')
 
             error_msg = "\033[0;30;47mERROR: Check log file for detailed error message.\033[1;37;40m"
             print(error_msg)
             print(dash_line)
+
+            client_order_id = 0
+
+            return client_order_id, None
 
     def cancel_order(self, ClOrdId):
         """
@@ -411,21 +456,43 @@ class ROFEXClient:
             logging.debug(f'ROFEXClient: Sending cancel message for order {ClOrdId}')
 
         try:
-            cancel_order = pyRofex.cancel_order(ClOrdId)
-
-            """
-            self.lk.acquire()
-            print(dash_line)
-            print(f"----------- Cancel Order Response: ".ljust(width, '-'))
-            pprint(cancel_order)
-            self.lk.release()
-
+            _ = pyRofex.cancel_order(ClOrdId)
             order_status = pyRofex.get_order_status(ClOrdId)
-            self.lk.acquire()
+
+            if _ or order_status is None:
+                raise ValueError
+            else:
+                clordid = order_status.get('order').get('clOrdId')
+                cum_qty = order_status.get('order').get('cumQty')
+                symbol = order_status.get('order').get('instrumentId').get('symbol')
+                last_px = float(order_status.get('order').get('lastPx'))
+                last_qty = order_status.get('order').get('lastQty')
+                leaves_qty = order_status.get('order').get('leaves_qty')
+                price = order_status.get('order').get('price')
+                side = order_status.get('order').get('side')
+                status = order_status.get('order').get('status')
+                order_qty = order_status.get('order').get('orderQty')
+
+                if order_status.get('order').get('status') == "CANCELLED":
+                    print(f'{status} Order {clordid} | {symbol} {side} {price} {order_qty}')
+
+                    if cum_qty > 0:
+                        print(f'Partially executed {cum_qty} ${last_px}')
+                        print(f'Leaves Qty: {leaves_qty}')
+                    else:
+                        print(f'No Fills {cum_qty} ${last_px}')
+                        print(f'Leaves Qty: {leaves_qty}')
+
+                    return True
+                else:
+                    return False
+
+        except ValueError as e:
+            logging.debug(f'ROFEXClient ERROR: En exception occurred {e}')
+            print('ClOrdID incorrecto')
             print(dash_line)
-            print(f"----------- Cancel Order Status Response: ".ljust(width, '-'))
-            pprint(order_status)
-            self.lk.release()"""
+
+            return False
 
         except Exception as e:
             if logging.getLevelName('DEBUG') > 1:
@@ -434,6 +501,8 @@ class ROFEXClient:
             error_msg = "\033[0;30;47mERROR: Check log file for detailed error message.\033[1;37;40m"
             print(error_msg)
             print(dash_line)
+
+            return False
 
     def cancel_all_orders(self):
         """
@@ -703,7 +772,7 @@ def create_log_file(session_time, env_param, verbose):
     # for windows
     if name == 'nt':
 
-        filename = f'c:/logs/ROFEX{env_param}-{session_time.year}{session_time.month}' \
+        filename = f'./logs/ROFEX{env_param}-{session_time.year}{session_time.month}' \
                    f'{session_time.day}{session_time.hour}{session_time.minute}{session_time.second}.log'
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(threadName)s-%(message)s', filename=filename)
 
